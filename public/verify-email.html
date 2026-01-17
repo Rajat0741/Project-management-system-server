@@ -214,7 +214,7 @@
                 resendBtn.innerText = 'Sending...';
                 
                 const response = await fetch('/api/v1/auth/resend-email-verification', {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },

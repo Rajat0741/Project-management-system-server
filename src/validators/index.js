@@ -30,4 +30,16 @@ const resendVerificationTokenValidator = () =>{
     ]
 }
 
-export {registerValidator, resendVerificationTokenValidator};
+const userLoginValidator = ()=>{
+    return [
+        body("email")
+            .trim()
+            .notEmpty().withMessage("Email is required")
+            .isEmail().withMessage("Email is invalid"),
+        body("password")
+            .trim()
+            .isLength({ min:6 }).withMessage("Password must be atleast 6 characters long"),
+    ]
+}
+
+export {registerValidator, resendVerificationTokenValidator, userLoginValidator};

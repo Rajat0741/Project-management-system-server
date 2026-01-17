@@ -4,6 +4,7 @@ import ApiError from "../utils/api-errors.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { emailVerificationMailgenContent, sendEmail } from "../utils/mail.js";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -12,8 +13,9 @@ const generateAccessAndRefreshToken = async (userId) => {
         const refreshToken = user.generateRefreshToken();
         user.refreshToken = refreshToken;
         await user.save({ validateBeforeSave: false });
+        return { accessToken, refreshToken }
     } catch (error) {
-
+        throw new ApiError(500, "Something went wrong while generating referesh and access token")
     }
 }
 
@@ -120,7 +122,7 @@ const resendVerificationToken = asyncHandler(async (req, res) => {
         throw new ApiError(400, "User not registered")
     }
 
-    if(user.isEmailVerified===true){
+    if (user.isEmailVerified === true) {
         throw new ApiError(400, "User already verified")
     }
 
@@ -153,9 +155,108 @@ const resendVerificationToken = asyncHandler(async (req, res) => {
 
 });
 
+const login = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        throw new ApiError(400, "Email and password are required");
+    }
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+        throw new ApiError(400, "User does not exist")
+    }
+
+    const isPasswordValid = await user.isPasswordCorrect(password);
+    if (!isPasswordValid) {
+        throw new ApiError(400, "Credentials are invalid")
+    }
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id)
+
+    const loggedInUser = await User.findById(user._id).select(
+        "-password -emailVerificationToken -emailVerificationExpiry -refreshToken -forgotPasswordToken -forgotPasswordExpiry"
+    )
+
+    if (!loggedInUser) {
+        throw new ApiError(500, "Something went wrong when logging in the user")
+    }
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res.status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(200, loggedInUser, "User logged in successfully")
+    )
+
+})
+
+const logout = asyncHandler(async(req, res)=>{
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+                refreshToken:"",
+            }
+        },
+        {
+            new: true
+        }
+    )
+
+    const options = {
+        httpOnly:true,
+        secure: true
+    }
+
+    return res.status(200)
+    .clearCookie("accessToken",options)
+    .clearCookie("refreshToken",options)
+    .json(new ApiResponse(200, {}, "User logged out successfully"))
+})
+
+const refreshAccessToken = asyncHandler(async (req, res) => {
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+    if(!incomingRefreshToken){
+        throw new ApiError(401, "Unauthorized Access")
+    }
+    try {
+        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
+        const user = await User.findById(decodedToken?._id)
+        if(!user){
+            throw new ApiError(401, "Invalid refresh token")
+        }
+        if (incomingRefreshToken!==user?.refreshToken){
+            throw new ApiError(401, "Refresh Token is expired or used")
+        }
+        const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user?._id);
+
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+
+        return res
+            .status(200)
+            .cookie("accessToken", accessToken, options)
+            .cookie("refreshToken", refreshToken, options)
+            .json(
+                new ApiResponse(200, { accessToken, refreshToken}, "Access token refreshed successfully")
+            )
+    } catch (error) {
+        throw new ApiError(400, "Invalid refresh token")
+    }
+})
+
 export {
     registerUser,
     generateAccessAndRefreshToken,
     verifyEmail,
-    resendVerificationToken
+    resendVerificationToken,
+    login,
+    logout,
+    refreshAccessToken
 }

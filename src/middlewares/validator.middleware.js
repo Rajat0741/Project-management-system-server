@@ -11,7 +11,7 @@ const validate = (req, res, next) => {
         msg: err.msg
     }));
 
-    throw new ApiError(422, "Received data is not valid", extractedErrors)
+    throw new ApiError(422, `Error: ${extractedErrors[0].msg}`, extractedErrors)
 }
 
 export default validate;

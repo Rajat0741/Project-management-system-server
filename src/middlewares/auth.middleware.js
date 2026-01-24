@@ -1,3 +1,4 @@
+import { ProjectMember } from "../models/projectmember.models.js";
 import { User } from "../models/user.models.js";
 import ApiError from "../utils/api-errors.js";
 import asyncHandler from "../utils/asyncHandler.js";
@@ -23,4 +24,36 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
     }
 })
 
-export default verifyJWT;
+const validateProjectPermission = (roles = []) => {
+    asyncHandler(async (req, res, next) => {
+        const { projectId } = req.params;
+
+        if (!projectId) {
+            throw new ApiError(400, "Project ID is required")
+        }
+
+        const projectMember = await ProjectMember.findOne({
+            project: new mongoose.Types.ObjectId(projectId),
+            user: new mongoose.Types.ObjectId(req.user._id)
+        });
+
+        if (!projectMember) {
+            throw new ApiError(403, "Forbidden: You don't have enough permission to perform this action")
+        }
+
+        const givenRole = projectMember.role;
+
+        req.user.role = givenRole;
+
+        if (!roles.includes(givenRole)) {
+            throw new ApiError(
+                403,
+                "Forbidden: You don't have enough permission to perform this action");
+        }
+
+        next();
+
+    })
+}
+
+export { verifyJWT, validateProjectPermission };

@@ -31,12 +31,18 @@ const taskSchema = new Schema({
     },
     attachmants: {
         type: [{
-            url: String,
-            mimetype: String,
-            size: number
+            url: { 
+                type: String, required: true 
+            },
+            mimetype: { 
+                type: String 
+            },
+            size: { 
+                type: number 
+            }
         }],
         default: []
     }
 }, { timestamps: true })
 
-export const Tasks = mongoose.model("Task",taskSchema);
+export const Tasks = mongoose.model("Task", taskSchema);

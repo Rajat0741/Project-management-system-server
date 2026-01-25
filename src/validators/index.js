@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { AvailableUserRole } from "../utils/constants";
 
 const registerValidator = ()=>{
     return [
@@ -73,4 +74,47 @@ const userChangeForgotPasswordValidator = ()=>{
     ]
 }
 
-export {registerValidator, resendVerificationTokenValidator, userLoginValidator, userChangeCurrentPasswordValidator, forgotPasswordValidator, userChangeForgotPasswordValidator};
+const createProjectValidator = () => {
+    return [
+        body("name")
+            .trim()
+            .notEmpty().withMessage("Project name is required"),
+        body("description")
+            .optional()
+            .trim()
+    ]
+}
+
+const addMembersToProjectValidator = () => {
+    return [
+        body("email")
+            .trim()
+            .notEmpty().withMessage("Email is required")
+            .isEmail().withMessage("Email is invalid"),
+        body("role")
+            .trim()
+            .notEmpty().withMessage("Role is required")
+            .isIn(AvailableUserRole).withMessage("Invalid role")
+    ]
+}
+
+const updateMemberRoleValidator = () => {
+    return [
+        body("role")
+            .trim()
+            .notEmpty().withMessage("Role is required")
+            .isIn(AvailableUserRole).withMessage("Invalid role")
+    ]
+}
+
+export {
+    registerValidator,
+    resendVerificationTokenValidator,
+    userLoginValidator,
+    userChangeCurrentPasswordValidator,
+    forgotPasswordValidator,
+    userChangeForgotPasswordValidator,
+    createProjectValidator,
+    addMembersToProjectValidator,
+    updateMemberRoleValidator
+};

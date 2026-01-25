@@ -85,7 +85,7 @@ const createProjectValidator = () => {
     ]
 }
 
-const addMembersToProjectValidator = () => {
+const addMemberToProjectValidator = () => {
     return [
         body("email")
             .trim()
@@ -107,6 +107,17 @@ const updateMemberRoleValidator = () => {
     ]
 }
 
+const updateProjectValidator = () => {
+    return [
+        body("name")
+            .trim()
+            .notEmpty().withMessage("Project name is required"),
+        body("description")
+            .optional()
+            .trim()
+    ]
+}
+
 export {
     registerValidator,
     resendVerificationTokenValidator,
@@ -115,6 +126,7 @@ export {
     forgotPasswordValidator,
     userChangeForgotPasswordValidator,
     createProjectValidator,
-    addMembersToProjectValidator,
-    updateMemberRoleValidator
+    addMemberToProjectValidator,
+    updateMemberRoleValidator,
+    updateProjectValidator
 };

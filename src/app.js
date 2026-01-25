@@ -24,6 +24,7 @@ import authRouter from "./routes/auth.routes.js"
 
 app.use("/api/v1/healthCheck",healthCheckRouter)
 app.use("/api/v1/auth",authRouter)
+app.use("/api/v1/projects", projectRouter);
 // also expose auth routes under /api/v1/users for compatibility with some links
 app.use("/api/v1/users", authRouter)
 

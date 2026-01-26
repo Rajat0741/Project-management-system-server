@@ -3,6 +3,7 @@ import { User } from "../models/user.models.js";
 import ApiError from "../utils/api-errors.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 const verifyJWT = asyncHandler(async (req, res, next) => {
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer", "").trim()
@@ -25,7 +26,7 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
 })
 
 const validateProjectPermission = (roles = []) => {
-    asyncHandler(async (req, res, next) => {
+    return asyncHandler(async (req, res, next) => {
         const { projectId } = req.params;
 
         if (!projectId) {

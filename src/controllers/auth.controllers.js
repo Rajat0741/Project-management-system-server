@@ -3,6 +3,7 @@ import ApiResponse from "../utils/api-response.js";
 import ApiError from "../utils/api-errors.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { emailVerificationMailgenContent, sendEmail } from "../utils/mail.js";
+import { uploadAvatar as uploadAvatarToImageKit, deleteFile } from "../utils/imagekit.js";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
@@ -350,6 +351,38 @@ const getCurrentUser = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, req.user, "Current user fetched successfully"))
 })
 
+const changeAvatar = asyncHandler(async (req, res) => {
+    if (!req.file) {
+        throw new ApiError(400, "Avatar file is required");
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    // Delete old avatar from ImageKit if it exists
+    if (user.avatar?.fileId) {
+        await deleteFile(user.avatar.fileId);
+    }
+
+    // Upload new avatar to ImageKit
+    const avatarData = await uploadAvatarToImageKit(req.file);
+
+    // Update user avatar
+    user.avatar = {
+        url: avatarData.url,
+        fileId: avatarData.fileId
+    };
+
+    await user.save({ validateBeforeSave: false });
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, { avatar: user.avatar }, "Avatar updated successfully"));
+})
+
 export {
     registerUser,
     generateAccessAndRefreshToken,
@@ -361,5 +394,6 @@ export {
     forgotPasswordRequest,
     resetForgotPassword,
     changeCurrentPassword,
-    getCurrentUser
+    getCurrentUser,
+    changeAvatar
 }

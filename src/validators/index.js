@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { AvailableUserRole } from "../utils/constants";
+import { AvailableTaskStatuses, AvailableUserRole } from "../utils/constants.js";
 
 const registerValidator = ()=>{
     return [
@@ -118,6 +118,59 @@ const updateProjectValidator = () => {
     ]
 }
 
+const createTaskValidator = () => {
+    return [
+        body("title")
+            .trim()
+            .notEmpty().withMessage("Task title is required"),
+        body("description")
+            .optional()
+            .trim(),
+        body("assignedTo")
+            .notEmpty().withMessage("Assigned Member is required")
+            .isMongoId().withMessage("Invalid Project Member ID"),
+        body("status")
+            .optional()
+            .isIn(AvailableTaskStatuses).withMessage("Invalid status")
+    ]
+}
+
+const updateTaskValidator = () => {
+    return [
+        body("title")
+            .optional()
+            .trim(),
+        body("description")
+            .optional()
+            .trim(),
+        body("assignedTo")
+            .optional()
+            .isMongoId().withMessage("Invalid Project Member ID"),
+        body("status")
+            .optional()
+            .isIn(AvailableTaskStatuses).withMessage("Invalid status")
+    ]
+}
+
+const createSubtaskValidator = () => {
+    return [
+        body("title")
+            .trim()
+            .notEmpty().withMessage("Subtask title is required"),
+    ]
+}
+
+const updateSubtaskValidator = () => {
+    return [
+        body("title")
+            .optional()
+            .trim(),
+        body("isCompleted")
+            .optional()
+            .isBoolean().withMessage("isCompleted must be a boolean value")
+    ]
+}
+
 export {
     registerValidator,
     resendVerificationTokenValidator,
@@ -128,5 +181,7 @@ export {
     createProjectValidator,
     addMemberToProjectValidator,
     updateMemberRoleValidator,
-    updateProjectValidator
+    updateProjectValidator,
+    createTaskValidator,
+    updateTaskValidator,
 };

@@ -3,7 +3,7 @@ import { verifyJWT, validateProjectPermission } from "../middlewares/auth.middle
 import validate from "../middlewares/validator.middleware.js";
 import { createProjectValidator, addMemberToProjectValidator, updateMemberRoleValidator, updateProjectValidator } from "../validators/index.js";
 import { getProjects, createProject, addMemberToProject, getProjectById, updateProject, deleteProject, getProjectMembers, deleteMember, updateMemberRole } from "../controllers/project.controllers.js";
-import { AvailableUserRole, UserRolesEnum } from "../utils/constants";
+import { AvailableUserRole, UserRolesEnum } from "../utils/constants.js";
 
 const router = Router();
 

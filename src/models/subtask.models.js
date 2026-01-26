@@ -22,4 +22,4 @@ const subTaskSchema = new Schema({
     }
 },{timestamps:true})
 
-export const Subtask = mongoose.Schema("Subtask", subTaskSchema);
+export const Subtask = mongoose.model("Subtask", subTaskSchema);

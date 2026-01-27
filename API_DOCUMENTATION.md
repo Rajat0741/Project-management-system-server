@@ -5,7 +5,7 @@
 ### Backend URL
 ```
 Production: https://your-app-name.onrender.com
-Development: http://localhost:8000
+Development: http://localhost:10000
 ```
 
 ### API Base Path
@@ -102,7 +102,7 @@ const register = async (userData) => {
     email: 'user@example.com',
     username: 'johndoe',
     password: 'password123',
-    fullname: 'John Doe' // optional
+    fullname: 'John Doe'
   });
   return response.data;
 };

@@ -6,9 +6,9 @@ const app = express();
 
 // CORS configuration
 app.use(cors({
-    origin: process.env.CORS_ORIGIN?.split(",") || "http://localhost:5173",
+    origin: process.env.CORS_ORIGIN?.split(","),
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }))
 
@@ -30,12 +30,16 @@ app.use("/api/v1/auth",authRouter)
 app.use("/api/v1/projects", projectRouter);
 app.use("/api/v1/tasks", taskRouter);
 app.use("/api/v1/notes", noteRouter);
-// also expose auth routes under /api/v1/users for compatibility with some links
-app.use("/api/v1/users", authRouter)
+
 
 app.get("/", (req, res) => {
     res.send("Initialization succeeded")
 })
+
+app.use((req, res, next) => {
+    const error = new ApiError(404, `Route ${req.originalUrl} not found`);
+    next(error);
+});
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;

@@ -2,7 +2,7 @@ import { User } from "../models/user.models.js";
 import ApiResponse from "../utils/api-response.js";
 import ApiError from "../utils/api-errors.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import { emailVerificationMailgenContent, sendEmail } from "../utils/mail.js";
+import { emailVerificationMailgenContent, forgotPasswordMailgenContent, sendEmail } from "../utils/mail.js";
 import { uploadAvatar as uploadAvatarToImageKit, deleteFile } from "../utils/imagekit.js";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
@@ -21,19 +21,25 @@ const generateAccessAndRefreshToken = async (userId) => {
 }
 
 const registerUser = asyncHandler(async (req, res, next) => {
-    const { email, username, password, role } = req.body
+    const { email, username, password, fullName } = req.body
 
-    const existedUser = await User.findOne({
-        $or: [{ username }, { email }]
-    })
+    const existedUser = await User.findOne({ email })
 
     if (existedUser) {
         throw new ApiError(409, "User already exists")
     }
+
+    const userNameCheck = await User.findOne({ username })
+
+    if (userNameCheck) {
+        throw new ApiError(409, "Username already taken, please choose another username")
+    }
+
     const user = await User.create({
         email,
         password,
         username,
+        fullName,
         isEmailVerified: false
     })
 
@@ -50,7 +56,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
             subject: "Please verify your Email",
             mailgenContent: emailVerificationMailgenContent(
                 user.username,
-                `${req.protocol}://${req.get("host")}/verify-email.html?token=${unHashedToken}`
+                `${process.env.EMAIL_VERIFICATION_URL}/${unHashedToken}`
             ),
 
         }
@@ -140,7 +146,7 @@ const resendVerificationToken = asyncHandler(async (req, res) => {
             subject: "Please verify your Email",
             mailgenContent: emailVerificationMailgenContent(
                 user.username,
-                `${req.protocol}://${req.get("host")}/verify-email.html?token=${unHashedToken}`
+                `${process.env.EMAIL_VERIFICATION_URL}/${unHashedToken}`
             ),
         }
     )
@@ -173,7 +179,7 @@ const login = asyncHandler(async (req, res) => {
     }
 
     if (!user.isEmailVerified) {
-        throw new ApiError(401, "Please verify your email before logging in")
+        throw new ApiError(403, "Please verify your email before logging in")
     }
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id)
@@ -226,16 +232,16 @@ const logout = asyncHandler(async (req, res) => {
 const refreshAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
     if (!incomingRefreshToken) {
-        throw new ApiError(401, "Unauthorized Access")
+        throw new ApiError(400, "Unauthorized Access")
     }
     try {
         const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
         const user = await User.findById(decodedToken?._id)
         if (!user) {
-            throw new ApiError(401, "Invalid refresh token")
+            throw new ApiError(403, "Invalid refresh token")
         }
         if (incomingRefreshToken !== user?.refreshToken) {
-            throw new ApiError(401, "Refresh Token is expired or used")
+            throw new ApiError(403, "Refresh Token is expired or used")
         }
         const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user?._id);
 
@@ -276,7 +282,10 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
         {
             email: user?.email,
             subject: "Password Reset Request",
-            mailgenContent: `Click <a href="${process.env.FORGOT_PASSWORD_URL}?token=${unHashedToken}">here</a> to reset your password. This link will expire in 1 hour.`,
+            mailgenContent: forgotPasswordMailgenContent(
+                user.username,
+                `${process.env.FORGOT_PASSWORD_URL}/${unHashedToken}`
+            )
         }
     )
 

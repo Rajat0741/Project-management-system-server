@@ -36,16 +36,16 @@ const attachmentFileFilter = (req, file, cb) => {
     }
 };
 
-// Avatar upload - single file, max 2MB
+// Avatar upload - single file, max 5 MB
 export const uploadAvatar = multer({
     storage: memoryStorage,
-    limits: { fileSize: 2 * 1024 * 1024 },
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: avatarFileFilter
 });
 
-// Attachment upload - single file per request, max 5MB
+// Attachment upload - single file per request, max 10 MB
 export const uploadAttachment = multer({
     storage: memoryStorage,
-    limits: { fileSize: 5 * 1024 * 1024 },
+    limits: { fileSize: 10 * 1024 * 1024 },
     fileFilter: attachmentFileFilter
 });

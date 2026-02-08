@@ -15,9 +15,8 @@ const registerValidator = ()=>{
             .isLength({ min:3 }).withMessage("Username must be atleast 3 characters long"),
         body("password")
             .trim()
-            .isLength({ min:6 }).withMessage("Password must be atleast 6 characters long"),
-        body("fullname")
-            .optional()
+            .isLength({ min:8 }).withMessage("Password must be atleast 8 characters long"),
+        body("fullName")
             .trim()
     ]
 }
@@ -171,6 +170,23 @@ const updateSubtaskValidator = () => {
     ]
 }
 
+const updateTaskStatusValidator = () => {
+    return [
+        body("status")
+            .trim()
+            .notEmpty().withMessage("Status is required")
+            .isIn(AvailableTaskStatuses).withMessage("Invalid status")
+    ]
+}
+
+const updateSubtaskStatusValidator = () => {
+    return [
+        body("isCompleted")
+            .notEmpty().withMessage("isCompleted is required")
+            .isBoolean().withMessage("isCompleted must be a boolean value")
+    ]
+}
+
 export {
     registerValidator,
     resendVerificationTokenValidator,
@@ -184,4 +200,8 @@ export {
     updateProjectValidator,
     createTaskValidator,
     updateTaskValidator,
+    createSubtaskValidator,
+    updateSubtaskValidator,
+    updateTaskStatusValidator,
+    updateSubtaskStatusValidator,
 };

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { verifyJWT, validateProjectPermission } from "../middlewares/auth.middleware.js";
 import validate from "../middlewares/validator.middleware.js";
 import { createProjectValidator, addMemberToProjectValidator, updateMemberRoleValidator, updateProjectValidator } from "../validators/index.js";
-import { getProjects, createProject, addMemberToProject, getProjectById, updateProject, deleteProject, getProjectMembers, deleteMember, updateMemberRole } from "../controllers/project.controllers.js";
+import { getProjects, createProject, addMemberToProject, getProjectById, updateProject, deleteProject, getProjectMembers, deleteMember, updateMemberRole, leaveProject } from "../controllers/project.controllers.js";
 import { AvailableUserRole, UserRolesEnum } from "../utils/constants.js";
 
 const router = Router();
@@ -20,7 +20,10 @@ router.route("/:projectId")
 
 router.route("/:projectId/members")
     .get(validateProjectPermission(AvailableUserRole), validate, getProjectMembers)
-    .post(validateProjectPermission([UserRolesEnum.ADMIN]), addMemberToProjectValidator(), validate, addMemberToProject);
+    .post(validateProjectPermission([UserRolesEnum.ADMIN]), addMemberToProjectValidator(), validate, addMemberToProject)
+
+router.route("/:projectId/leave")
+    .delete(validateProjectPermission(AvailableUserRole), validate, leaveProject)
 
 router.route("/:projectId/members/:userId")
     .delete(validateProjectPermission([UserRolesEnum.ADMIN]), validate, deleteMember)

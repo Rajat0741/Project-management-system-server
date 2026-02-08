@@ -18,7 +18,7 @@ router.route("/forgot-password").post(forgotPasswordValidator(), validate, forgo
 router.route("/reset-password/:resetToken").post(userChangeForgotPasswordValidator(), validate, resetForgotPassword);
 
 //secure route
-router.route("/logout").post(verifyJWT, validate, logout);
+router.route("/logout").post(verifyJWT, logout);
 router.route("/current-user").get(verifyJWT, getCurrentUser);
 router.route("/change-password").post(verifyJWT, userChangeCurrentPasswordValidator(), validate, changeCurrentPassword);
 router.route("/avatar").patch(verifyJWT, uploadAvatar.single("avatar"), changeAvatar);

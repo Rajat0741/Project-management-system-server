@@ -14,16 +14,16 @@ const sendEmail = async (options) => {
     const emailText = mailGenerator.generatePlaintext(options.mailgenContent);
 
     const transporter = nodemailer.createTransport({
-        host: process.env.MAILTRAP_SMTP_HOST,
-        port: process.env.MAILTRAP_SMTP_PORT,
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
         auth: {
-            user: process.env.MAILTRAP_SMTP_USER,
-            pass: process.env.MAILTRAP_SMTP_PASS
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS
         }
     });
 
     const mail = {
-        from: "mail.taskmanager@example.com",
+        from: "projectpms1255@gmail.com",
         to: options.email,
         subject: options.subject,
         text: emailText,
@@ -33,7 +33,7 @@ const sendEmail = async (options) => {
     try {
         await transporter.sendMail(mail);
     } catch (error) {
-        console.log("Email service failed silently.Make sure you have configured the MAILTRAP credentials in the .env file");
+        console.log("Email service failed silently. Make sure you have configured the SMTP credentials in the .env file");
         console.error(`Error sending email: ${error}`);
     }
 

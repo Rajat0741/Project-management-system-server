@@ -53,7 +53,7 @@ const forgotPasswordValidator = ()=>{
 
 const userChangeCurrentPasswordValidator = ()=>{
     return [
-        body("oldPassword")
+        body("currentPassword")
             .trim()
             .notEmpty().withMessage("Old Password is required")
             .isLength({ min:6 }).withMessage("Password must be atleast 6 characters long"),

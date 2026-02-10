@@ -1,5 +1,5 @@
 import Mailgen from "mailgen";
-import nodemailer from "nodemailer";
+import { google } from "googleapis";
 
 const sendEmail = async (options) => {
     const mailGenerator = new Mailgen({
@@ -13,32 +13,57 @@ const sendEmail = async (options) => {
     const emailHtml = mailGenerator.generate(options.mailgenContent);
     const emailText = mailGenerator.generatePlaintext(options.mailgenContent);
 
-    const smtpPort = Number(process.env.SMTP_PORT) || 587;
-    const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: smtpPort,
-        secure: smtpPort === 465,
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS
-        },
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
+    // Create OAuth2 client
+    const oauth2Client = new google.auth.OAuth2(
+        process.env.GMAIL_CLIENT_ID,
+        process.env.GMAIL_CLIENT_SECRET,
+        "https://developers.google.com/oauthplayground"
+    );
+
+    oauth2Client.setCredentials({
+        refresh_token: process.env.GMAIL_REFRESH_TOKEN
     });
 
-    const mail = {
-        from: "projectpms1255@gmail.com",
-        to: options.email,
-        subject: options.subject,
-        text: emailText,
-        html: emailHtml
-    }
+    const gmail = google.gmail({ version: "v1", auth: oauth2Client });
+
+    // Create email in MIME format
+    const subject = options.subject;
+    const utf8Subject = `=?utf-8?B?${Buffer.from(subject).toString("base64")}?=`;
+    const messageParts = [
+        `From: ${process.env.GMAIL_USER_EMAIL || "projectpms1255@gmail.com"}`,
+        `To: ${options.email}`,
+        `Content-Type: multipart/alternative; boundary="boundary"`,
+        `MIME-Version: 1.0`,
+        `Subject: ${utf8Subject}`,
+        "",
+        "--boundary",
+        "Content-Type: text/plain; charset=utf-8",
+        "",
+        emailText,
+        "--boundary",
+        "Content-Type: text/html; charset=utf-8",
+        "",
+        emailHtml,
+        "--boundary--"
+    ];
+
+    const message = messageParts.join("\n");
+    const encodedMessage = Buffer.from(message)
+        .toString("base64")
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
 
     try {
-        await transporter.sendMail(mail);
+        await gmail.users.messages.send({
+            userId: "me",
+            requestBody: {
+                raw: encodedMessage
+            }
+        });
     } catch (error) {
-        console.log("Email service failed silently. Make sure you have configured the SMTP credentials in the .env file");
-        console.error(`Error sending email: ${error}`);
+        console.error(`Error sending email: ${error.message}`);
+        throw new Error(`Failed to send email: ${error.message}`);
     }
 
 }

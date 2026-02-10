@@ -50,17 +50,23 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    await sendEmail(
-        {
-            email: user?.email,
-            subject: "Please verify your Email",
-            mailgenContent: emailVerificationMailgenContent(
-                user.username,
-                `${process.env.EMAIL_VERIFICATION_URL}/${unHashedToken}`
-            ),
+    try {
+        await sendEmail(
+            {
+                email: user?.email,
+                subject: "Please verify your Email",
+                mailgenContent: emailVerificationMailgenContent(
+                    user.username,
+                    `${process.env.EMAIL_VERIFICATION_URL}/${unHashedToken}`
+                ),
 
-        }
-    )
+            }
+        )
+    } catch (emailError) {
+        // Rollback: Remove the user if email fails
+        await User.findByIdAndDelete(user._id);
+        throw new ApiError(500, `User registered but failed to send verification email: ${emailError.message}`);
+    }
 
     const createdUser = await User.findById(user._id).select(
         "-password -emailVerificationToken -emailVerificationExpiry -refreshToken"
@@ -140,16 +146,20 @@ const resendVerificationToken = asyncHandler(async (req, res) => {
 
     await user.save({ validateBeforeSave: false });
 
-    await sendEmail(
-        {
-            email: user?.email,
-            subject: "Please verify your Email",
-            mailgenContent: emailVerificationMailgenContent(
-                user.username,
-                `${process.env.EMAIL_VERIFICATION_URL}/${unHashedToken}`
-            ),
-        }
-    )
+    try {
+        await sendEmail(
+            {
+                email: user?.email,
+                subject: "Please verify your Email",
+                mailgenContent: emailVerificationMailgenContent(
+                    user.username,
+                    `${process.env.EMAIL_VERIFICATION_URL}/${unHashedToken}`
+                ),
+            }
+        )
+    } catch (emailError) {
+        throw new ApiError(500, `Failed to send verification email: ${emailError.message}`);
+    }
 
     return res
         .status(200)
@@ -281,16 +291,20 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
 
     await user.save({ validateBeforeSave: false });
 
-    await sendEmail(
-        {
-            email: user?.email,
-            subject: "Password Reset Request",
-            mailgenContent: forgotPasswordMailgenContent(
-                user.username,
-                `${process.env.FORGOT_PASSWORD_URL}/${unHashedToken}`
-            )
-        }
-    )
+    try {
+        await sendEmail(
+            {
+                email: user?.email,
+                subject: "Password Reset Request",
+                mailgenContent: forgotPasswordMailgenContent(
+                    user.username,
+                    `${process.env.FORGOT_PASSWORD_URL}/${unHashedToken}`
+                )
+            }
+        )
+    } catch (emailError) {
+        throw new ApiError(500, `Failed to send password reset email: ${emailError.message}`);
+    }
 
     return res
         .status(200)

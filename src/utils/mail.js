@@ -5,8 +5,8 @@ const sendEmail = async (options) => {
     const mailGenerator = new Mailgen({
         theme: "default",
         product: {
-            name: "Task Manager",
-            link: "https://taskmanagelink.com"
+            name: "Tasky- Project Management System",
+            link: "https://tasky-steel-mu.vercel.app/"
         }
     })
 

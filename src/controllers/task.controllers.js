@@ -155,7 +155,7 @@ const createTask = asyncHandler(async (req, res) => {
         description,
         project: new mongoose.Types.ObjectId(projectId),
         assignedTo: new mongoose.Types.ObjectId(assignedTo),
-        assignedBy: new mongoose.Types.ObjectId(req.user.projectMemberId),
+        assignedBy: new mongoose.Types.ObjectId(req.user._id),
         status,
         attachments: [],
     });

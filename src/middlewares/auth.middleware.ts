@@ -3,8 +3,9 @@ import { User } from "../models/user.models.js";
 import { Project } from "../models/project.models.js";
 import ApiError from "../utils/api-errors.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import jwt from "jsonwebtoken";
+import jwt, { TokenExpiredError, type JwtPayload } from "jsonwebtoken";
 import mongoose from "mongoose";
+import { SignOptions } from "jsonwebtoken";
 
 const verifyJWT = asyncHandler(async (req, res, next) => {
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer", "").trim()
@@ -14,22 +15,25 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
     }
 
     try {
-        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-        const user = await User.findById(decodedToken?._id).select("-password -emailVerificationToken -emailVerificationExpiry -refreshToken -forgotPasswordToken -forgotPasswordExpiry");
+        const decodedToken = jwt.verify(
+            token,
+            process.env.ACCESS_TOKEN_SECRET as string,
+        ) as JwtPayload;
+        const user = await User.findById(decodedToken?._id as string).select("-password -emailVerificationToken -emailVerificationExpiry -refreshToken -forgotPasswordToken -forgotPasswordExpiry");
         if (!user) {
             throw new ApiError(403, "User not found")
         }
         req.user = user;
         next()
-    } catch (error) {
-        if (error.name === "TokenExpiredError") {
+    } catch (error: unknown) {
+        if (error instanceof TokenExpiredError) {
             throw new ApiError(401, "Access Token Expired")
         }
         throw new ApiError(403, "Invalid access Token")
     }
 })
 
-const validateProjectPermission = (roles = []) => {
+const validateProjectPermission = (roles: string[] = []) => {
     return asyncHandler(async (req, res, next) => {
         const { projectId } = req.params;
 

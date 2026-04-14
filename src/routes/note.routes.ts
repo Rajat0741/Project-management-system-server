@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { verifyJWT, validateProjectPermission } from "../middlewares/auth.middleware.js";
-import validate from "../middlewares/validator.middleware.js";
 import { AvailableUserRole, UserRolesEnum } from "../utils/constants.js";
 import {
     getNotes,
@@ -16,12 +15,12 @@ router.use(verifyJWT);
 
 // Note routes
 router.route("/:projectId")
-    .get(validateProjectPermission(AvailableUserRole), validate, getNotes)
-    .post(validateProjectPermission([UserRolesEnum.ADMIN]), validate, createNote);
+    .get(validateProjectPermission(AvailableUserRole), getNotes)
+    .post(validateProjectPermission([UserRolesEnum.ADMIN]), createNote);
 
 router.route("/:projectId/:noteId")
-    .get(validateProjectPermission(AvailableUserRole), validate, getNoteById)
-    .put(validateProjectPermission([UserRolesEnum.ADMIN]), validate, updateNote)
-    .delete(validateProjectPermission([UserRolesEnum.ADMIN]), validate, deleteNote);
+    .get(validateProjectPermission(AvailableUserRole), getNoteById)
+    .put(validateProjectPermission([UserRolesEnum.ADMIN]), updateNote)
+    .delete(validateProjectPermission([UserRolesEnum.ADMIN]), deleteNote);
 
 export default router;

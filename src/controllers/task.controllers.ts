@@ -161,7 +161,7 @@ const createTask = asyncHandler(async (req, res) => {
     });
 
     // Create subtasks if provided
-    let createdSubtasks = [];
+    let createdSubtasks: any[] = [];
     if (subtasks && Array.isArray(subtasks) && subtasks.length > 0) {
         const subtaskDocuments = subtasks.map((subtask) => ({
             title: subtask.title,
@@ -174,9 +174,11 @@ const createTask = asyncHandler(async (req, res) => {
     }
 
     // Handle attachments if any
-    if (req.files && req.files.length > 0) {
-        const attachmentPromises = req.files.map((file) =>
-            uploadToImageKit(file, projectId, task._id),
+    const uploadedFiles = (req.files as Express.Multer.File[] | undefined) ?? [];
+
+    if (uploadedFiles.length > 0) {
+        const attachmentPromises = uploadedFiles.map((file: Express.Multer.File) =>
+            uploadToImageKit(file, projectId, task._id.toString()),
         );
         const attachments = await Promise.all(attachmentPromises);
 
@@ -359,7 +361,12 @@ const assignAttachment = asyncHandler(async (req, res) => {
     const attachmentData = await uploadToImageKit(req.file, projectId, taskId);
 
     // Add attachment to task
-    task.attachments.push(attachmentData);
+    task.attachments.push({
+        fileId: attachmentData.fileId || "",
+        url: attachmentData.url || "",
+        filePath: attachmentData.filePath || "",
+        thumbnail: attachmentData.thumbnail || "",
+    });
     await task.save();
 
     // Filter attachment data before sending response

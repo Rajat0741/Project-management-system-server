@@ -1,10 +1,12 @@
 import multer from "multer";
+import type { Request } from "express";
+import type { FileFilterCallback } from "multer";
 
 // Memory storage - files stored in buffer for direct upload to ImageKit
 const memoryStorage = multer.memoryStorage();
 
 // File filter for avatars (images only)
-const avatarFileFilter = (req, file, cb) => {
+const avatarFileFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
     const allowedMimeTypes = [
         'image/jpeg',
         'image/png',
@@ -15,12 +17,12 @@ const avatarFileFilter = (req, file, cb) => {
     if (allowedMimeTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('Invalid file type. Only images allowed for avatar.'), false);
+        cb(new Error('Invalid file type. Only images allowed for avatar.'));
     }
 };
 
 // File filter for task attachments (images + PDFs)
-const attachmentFileFilter = (req, file, cb) => {
+const attachmentFileFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
     const allowedMimeTypes = [
         'image/jpeg',
         'image/png',
@@ -32,7 +34,7 @@ const attachmentFileFilter = (req, file, cb) => {
     if (allowedMimeTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('Invalid file type. Only images and PDFs allowed for attachments.'), false);
+        cb(new Error('Invalid file type. Only images and PDFs allowed for attachments.'));
     }
 };
 

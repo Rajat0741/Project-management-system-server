@@ -324,7 +324,7 @@ const leaveProject = asyncHandler(async (req, res) => {
     });
 
     // Collect all file IDs from these tasks
-    const fileIdsToDelete = tasksToDelete.reduce((acc, task) => {
+    const fileIdsToDelete = tasksToDelete.reduce<string[]>((acc, task) => {
         if (task.attachments && task.attachments.length > 0) {
             const ids = task.attachments.map((att) => att.fileId);
             return [...acc, ...ids];

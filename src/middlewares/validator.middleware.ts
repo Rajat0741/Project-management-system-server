@@ -1,17 +1,39 @@
-import { validationResult } from "express-validator";
-import ApiError from "../utils/api-errors.js"
+import type { NextFunction, Request, Response } from "express";
+import { z } from "zod";
+import ApiError from "../utils/api-errors.js";
 
-const validate = (req, res, next) => {
-    const error = validationResult(req);
-    if (error.isEmpty()) {
-        return next();
-    }
-    const extractedErrors = error.array().map(err => ({
-        path: err.path,
-        msg: err.msg
-    }));
+const validate = (schema: z.ZodTypeAny) =>
+    async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const parsed = await schema.parseAsync({
+                body: req.body,
+                query: req.query,
+                params: req.params,
+            });
 
-    throw new ApiError(422, `Error: ${extractedErrors[0].msg}`, extractedErrors)
-}
+            if (
+                typeof parsed === "object" &&
+                parsed !== null &&
+                "body" in parsed
+            ) {
+                req.body = (parsed as { body: unknown }).body;
+            }
+
+            next();
+        } catch (error: unknown) {
+            if (error instanceof z.ZodError) {
+                throw new ApiError(
+                    400,
+                    "Validation failed",
+                    error.issues.map((issue) => ({
+                        field: issue.path.join("."),
+                        message: issue.message,
+                    })),
+                );
+            }
+
+            throw error;
+        }
+    };
 
 export default validate;

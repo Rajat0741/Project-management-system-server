@@ -51,7 +51,6 @@ A full-featured backend API for managing projects, tasks, team members, and note
 ### Email Services
 - **Mailgen** - Email template generation
 - **Google APIs** - Gmail OAuth2 integration
-- **Axios** - HTTP client for API requests
 
 ### Validation
 - **express-validator v7.3.1** - Request data validation

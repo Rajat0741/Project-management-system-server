@@ -1,4 +1,5 @@
 import express from "express"
+import type { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import ApiError from "./utils/api-errors.js";
@@ -42,7 +43,7 @@ app.use((req, res, next) => {
     next(error);
 });
 
-app.use((err, req, res, next) => {
+app.use((err: ApiError, req: Request, res: Response, _next: NextFunction) => {
     const statusCode = err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 

@@ -5,11 +5,14 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { emailVerificationMailgenContent, forgotPasswordMailgenContent, sendEmail } from "../utils/mail.js";
 import { uploadAvatar as uploadAvatarToImageKit, deleteFile } from "../utils/imagekit.js";
 import crypto from "crypto";
-import jwt from "jsonwebtoken";
+import jwt, { type JwtPayload } from "jsonwebtoken";
 
-const generateAccessAndRefreshToken = async (userId) => {
+const generateAccessAndRefreshToken = async (userId: any) => {
     try {
         const user = await User.findById(userId);
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
         const accessToken = user.generateAccessToken();
         const refreshToken = user.generateRefreshToken();
         user.refreshToken = refreshToken;
@@ -46,7 +49,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     const { unHashedToken, hashedToken, tokenExpiry } = user.generateTemporaryToken();
 
     user.emailVerificationToken = hashedToken;
-    user.emailVerificationExpiry = tokenExpiry;
+    user.emailVerificationExpiry = new Date(tokenExpiry);
 
     await user.save({ validateBeforeSave: false });
 
@@ -62,10 +65,11 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
             }
         )
-    } catch (emailError) {
+    } catch (emailError: unknown) {
         // Rollback: Remove the user if email fails
         await User.findByIdAndDelete(user._id);
-        throw new ApiError(500, `User registered but failed to send verification email: ${emailError.message}`);
+        const message = emailError instanceof Error ? emailError.message : "Unknown error";
+        throw new ApiError(500, `User registered but failed to send verification email: ${message}`);
     }
 
     const createdUser = await User.findById(user._id).select(
@@ -142,7 +146,7 @@ const resendVerificationToken = asyncHandler(async (req, res) => {
     const { unHashedToken, hashedToken, tokenExpiry } = user.generateTemporaryToken();
 
     user.emailVerificationToken = hashedToken;
-    user.emailVerificationExpiry = tokenExpiry;
+    user.emailVerificationExpiry = new Date(tokenExpiry);
 
     await user.save({ validateBeforeSave: false });
 
@@ -157,8 +161,9 @@ const resendVerificationToken = asyncHandler(async (req, res) => {
                 ),
             }
         )
-    } catch (emailError) {
-        throw new ApiError(500, `Failed to send verification email: ${emailError.message}`);
+    } catch (emailError: unknown) {
+        const message = emailError instanceof Error ? emailError.message : "Unknown error";
+        throw new ApiError(500, `Failed to send verification email: ${message}`);
     }
 
     return res
@@ -247,8 +252,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Unauthorized Access")
     }
     try {
-        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
-        const user = await User.findById(decodedToken?._id)
+        const decodedToken = jwt.verify(
+            incomingRefreshToken,
+            process.env.REFRESH_TOKEN_SECRET as string,
+        ) as JwtPayload;
+        const user = await User.findById(decodedToken?._id as string)
         if (!user) {
             throw new ApiError(403, "Invalid refresh token")
         }
@@ -287,7 +295,7 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
     const { unHashedToken, hashedToken, tokenExpiry } = user.generateTemporaryToken();
 
     user.forgotPasswordToken = hashedToken;
-    user.forgotPasswordExpiry = tokenExpiry;
+    user.forgotPasswordExpiry = new Date(tokenExpiry);
 
     await user.save({ validateBeforeSave: false });
 
@@ -302,8 +310,9 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
                 )
             }
         )
-    } catch (emailError) {
-        throw new ApiError(500, `Failed to send password reset email: ${emailError.message}`);
+    } catch (emailError: unknown) {
+        const message = emailError instanceof Error ? emailError.message : "Unknown error";
+        throw new ApiError(500, `Failed to send password reset email: ${message}`);
     }
 
     return res
@@ -398,8 +407,8 @@ const changeAvatar = asyncHandler(async (req, res) => {
 
     // Update user avatar
     user.avatar = {
-        url: avatarData.url,
-        fileId: avatarData.fileId
+        url: avatarData.url || "https://placehold.co/200",
+        fileId: avatarData.fileId || ""
     };
 
     await user.save({ validateBeforeSave: false });

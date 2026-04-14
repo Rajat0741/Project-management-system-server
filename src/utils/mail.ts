@@ -1,7 +1,13 @@
 import Mailgen from "mailgen";
 import { google } from "googleapis";
 
-const sendEmail = async (options) => {
+interface SendEmailOptions {
+    email: string;
+    subject: string;
+    mailgenContent: Mailgen.Content;
+}
+
+const sendEmail = async (options: SendEmailOptions) => {
     const mailGenerator = new Mailgen({
         theme: "default",
         product: {
@@ -61,14 +67,15 @@ const sendEmail = async (options) => {
                 raw: encodedMessage
             }
         });
-    } catch (error) {
-        console.error(`Error sending email: ${error.message}`);
-        throw new Error(`Failed to send email: ${error.message}`);
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "Unknown error";
+        console.error(`Error sending email: ${message}`);
+        throw new Error(`Failed to send email: ${message}`);
     }
 
 }
 
-const emailVerificationMailgenContent = (username, verificationUrl) => {
+const emailVerificationMailgenContent = (username: string, verificationUrl: string) => {
     return {
         body: {
             name: username,
@@ -86,7 +93,7 @@ const emailVerificationMailgenContent = (username, verificationUrl) => {
     };
 }
 
-const forgotPasswordMailgenContent = (username, passwordResetUrl) => {
+const forgotPasswordMailgenContent = (username: string, passwordResetUrl: string) => {
     return {
         body: {
             name: username,

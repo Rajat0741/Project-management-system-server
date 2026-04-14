@@ -1,4 +1,4 @@
-import "dotenv/config";  // Must be first - loads .env immediately
+import "dotenv/config";
 
 import app from "./app.js";
 import connectDB from "./db/index.js";

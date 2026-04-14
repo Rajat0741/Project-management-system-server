@@ -2,13 +2,14 @@ import express from "express"
 import type { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { env } from "./config/env.js";
 import ApiError from "./utils/api-errors.js";
 
 const app = express();
 
 // CORS configuration
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: env.CORS_ORIGIN,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -52,7 +53,7 @@ app.use((err: ApiError, req: Request, res: Response, _next: NextFunction) => {
         statusCode,
         message,
         errors: err.errors || [],
-        stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+        stack: env.NODE_ENV === "development" ? err.stack : undefined,
     });
 })
 

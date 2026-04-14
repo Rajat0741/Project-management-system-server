@@ -1,11 +1,12 @@
 import ImageKit, { toFile } from "@imagekit/nodejs";
+import { env } from "../config/env.js";
 
 // Initialize ImageKit instance (new SDK only requires privateKey)
 const imagekit = new ImageKit({
-    privateKey: process.env.IMAGEKIT_PRIVATE_KEY as string,
+    privateKey: env.IMAGEKIT_PRIVATE_KEY,
 });
 
-const urlEndpoint = process.env.IMAGEKIT_URL_ENDPOINT;
+const urlEndpoint = env.IMAGEKIT_URL_ENDPOINT;
 
 // Upload avatar to ImageKit
 export const uploadAvatar = async (file: Express.Multer.File) => {

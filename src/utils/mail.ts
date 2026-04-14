@@ -1,5 +1,6 @@
 import Mailgen from "mailgen";
 import { google } from "googleapis";
+import { env } from "../config/env.js";
 
 interface SendEmailOptions {
     email: string;
@@ -21,13 +22,13 @@ const sendEmail = async (options: SendEmailOptions) => {
 
     // Create OAuth2 client
     const oauth2Client = new google.auth.OAuth2(
-        process.env.GMAIL_CLIENT_ID,
-        process.env.GMAIL_CLIENT_SECRET,
+        env.GMAIL_CLIENT_ID,
+        env.GMAIL_CLIENT_SECRET,
         "https://developers.google.com/oauthplayground"
     );
 
     oauth2Client.setCredentials({
-        refresh_token: process.env.GMAIL_REFRESH_TOKEN
+        refresh_token: env.GMAIL_REFRESH_TOKEN
     });
 
     const gmail = google.gmail({ version: "v1", auth: oauth2Client });
@@ -36,7 +37,7 @@ const sendEmail = async (options: SendEmailOptions) => {
     const subject = options.subject;
     const utf8Subject = `=?utf-8?B?${Buffer.from(subject).toString("base64")}?=`;
     const messageParts = [
-        `From: ${process.env.GMAIL_USER_EMAIL || "projectpms1255@gmail.com"}`,
+        `From: ${env.GMAIL_USER_EMAIL}`,
         `To: ${options.email}`,
         `Content-Type: multipart/alternative; boundary="boundary"`,
         `MIME-Version: 1.0`,

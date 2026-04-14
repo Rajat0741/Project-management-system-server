@@ -4,6 +4,7 @@ import ApiError from "../utils/api-errors.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { emailVerificationMailgenContent, forgotPasswordMailgenContent, sendEmail } from "../utils/mail.js";
 import { uploadAvatar as uploadAvatarToImageKit, deleteFile } from "../utils/imagekit.js";
+import { env } from "../config/env.js";
 import crypto from "crypto";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 
@@ -60,7 +61,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
                 subject: "Please verify your Email",
                 mailgenContent: emailVerificationMailgenContent(
                     user.username,
-                    `${process.env.EMAIL_VERIFICATION_URL}/${unHashedToken}`
+                    `${env.EMAIL_VERIFICATION_URL}/${unHashedToken}`
                 ),
 
             }
@@ -157,7 +158,7 @@ const resendVerificationToken = asyncHandler(async (req, res) => {
                 subject: "Please verify your Email",
                 mailgenContent: emailVerificationMailgenContent(
                     user.username,
-                    `${process.env.EMAIL_VERIFICATION_URL}/${unHashedToken}`
+                    `${env.EMAIL_VERIFICATION_URL}/${unHashedToken}`
                 ),
             }
         )
@@ -254,7 +255,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     try {
         const decodedToken = jwt.verify(
             incomingRefreshToken,
-            process.env.REFRESH_TOKEN_SECRET as string,
+            env.REFRESH_TOKEN_SECRET,
         ) as JwtPayload;
         const user = await User.findById(decodedToken?._id as string)
         if (!user) {
@@ -306,7 +307,7 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
                 subject: "Password Reset Request",
                 mailgenContent: forgotPasswordMailgenContent(
                     user.username,
-                    `${process.env.FORGOT_PASSWORD_URL}/${unHashedToken}`
+                    `${env.FORGOT_PASSWORD_URL}/${unHashedToken}`
                 )
             }
         )

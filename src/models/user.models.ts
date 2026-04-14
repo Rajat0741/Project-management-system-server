@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt, { SignOptions } from "jsonwebtoken";
 import crypto from "crypto";
+import { env } from "../config/env.js";
 
 export interface IAvatar {
     url: string;
@@ -109,9 +110,9 @@ userSchema.methods.generateAccessToken = function () {
         email: this.email,
         username: this.username,
     },
-        process.env.ACCESS_TOKEN_SECRET as string,
+        env.ACCESS_TOKEN_SECRET,
         {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY as SignOptions["expiresIn"]
+            expiresIn: env.ACCESS_TOKEN_EXPIRY as SignOptions["expiresIn"]
         })
 }
 
@@ -121,9 +122,9 @@ userSchema.methods.generateRefreshToken = function () {
         email: this.email,
         username: this.username,
     },
-        process.env.REFRESH_TOKEN_SECRET as string,
+        env.REFRESH_TOKEN_SECRET,
         {
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRY as SignOptions["expiresIn"]
+            expiresIn: env.REFRESH_TOKEN_EXPIRY as SignOptions["expiresIn"]
         })
 }
 

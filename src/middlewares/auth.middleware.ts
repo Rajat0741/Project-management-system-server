@@ -3,35 +3,41 @@ import { User } from "../models/user.models.js";
 import { Project } from "../models/project.models.js";
 import ApiError from "../utils/api-errors.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import jwt, { TokenExpiredError, type JwtPayload } from "jsonwebtoken";
+import jwt, { type JwtPayload } from "jsonwebtoken";
 import mongoose from "mongoose";
-import { SignOptions } from "jsonwebtoken";
+import { env } from "../config/env.js";
 
 const verifyJWT = asyncHandler(async (req, res, next) => {
-    const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer", "").trim()
+    const token = req.cookies?.accessToken || 
+        req.header("Authorization")?.replace("Bearer", "").trim();
 
     if (!token) {
-        throw new ApiError(401, "Unauthorized access")
+        throw new ApiError(401, "Unauthorized access");
     }
 
+    let decodedToken: JwtPayload;
     try {
-        const decodedToken = jwt.verify(
-            token,
-            process.env.ACCESS_TOKEN_SECRET as string,
-        ) as JwtPayload;
-        const user = await User.findById(decodedToken?._id as string).select("-password -emailVerificationToken -emailVerificationExpiry -refreshToken -forgotPasswordToken -forgotPasswordExpiry");
-        if (!user) {
-            throw new ApiError(403, "User not found")
-        }
-        req.user = user;
-        next()
+        decodedToken = jwt.verify(token, env.ACCESS_TOKEN_SECRET) as JwtPayload;
     } catch (error: unknown) {
-        if (error instanceof TokenExpiredError) {
-            throw new ApiError(401, "Access Token Expired")
+        if (error instanceof Error && error.name === "TokenExpiredError") {
+            throw new ApiError(401, "Access Token Expired");
         }
-        throw new ApiError(403, "Invalid access Token")
+        throw new ApiError(403, "Invalid access Token");
     }
-})
+
+    if (!decodedToken._id || typeof decodedToken._id !== "string") {
+        throw new ApiError(403, "Invalid access token payload");
+    }
+
+    const user = await User.findById(decodedToken._id as string)
+        .select("-password -refreshToken -forgotPasswordToken -forgotPasswordExpiry -emailVerificationToken -emailVerificationExpiry");
+    if (!user) {
+        throw new ApiError(403, "User not found");
+    }
+
+    req.user = user;
+    next();
+});
 
 const validateProjectPermission = (roles: string[] = []) => {
     return asyncHandler(async (req, res, next) => {

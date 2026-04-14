@@ -1,9 +1,40 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import crypto from "crypto"
+import jwt, { SignOptions } from "jsonwebtoken";
+import crypto from "crypto";
 
-const userSchema = new Schema(
+export interface IAvatar {
+    url: string;
+    fileId: string;
+}
+
+export interface ITemporaryToken {
+    unHashedToken: string;
+    hashedToken: string;
+    tokenExpiry: number;
+}
+
+export interface IUser extends Document {
+    avatar: IAvatar;
+    username: string;
+    email: string;
+    fullName: string;
+    password?: string;
+    isEmailVerified: boolean;
+    refreshToken?: string;
+    forgotPasswordToken?: string;
+    forgotPasswordExpiry?: Date;
+    emailVerificationToken?: string;
+    emailVerificationExpiry?: Date;
+    createdAt: Date;
+    updatedAt: Date;
+    isPasswordCorrect(password: string): Promise<boolean>;
+    generateAccessToken(): string;
+    generateRefreshToken(): string;
+    generateTemporaryToken(): ITemporaryToken;
+}
+
+const userSchema = new Schema<IUser>(
     {
         avatar: {
             type: {
@@ -63,12 +94,12 @@ const userSchema = new Schema(
 })
 
 userSchema.pre("save", async function () {
-    if (this.isModified("password")) {
+    if (this.isModified("password") && this.password) {
         this.password = await bcrypt.hash(this.password, 10);
     }
 })
 
-userSchema.methods.isPasswordCorrect = async function (password) {
+userSchema.methods.isPasswordCorrect = async function (password: string) {
     return await bcrypt.compare(password, this.password);
 }
 
@@ -78,9 +109,9 @@ userSchema.methods.generateAccessToken = function () {
         email: this.email,
         username: this.username,
     },
-        process.env.ACCESS_TOKEN_SECRET,
+        process.env.ACCESS_TOKEN_SECRET as string,
         {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY as SignOptions["expiresIn"]
         })
 }
 
@@ -90,9 +121,9 @@ userSchema.methods.generateRefreshToken = function () {
         email: this.email,
         username: this.username,
     },
-        process.env.REFRESH_TOKEN_SECRET,
+        process.env.REFRESH_TOKEN_SECRET as string,
         {
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY as SignOptions["expiresIn"]
         })
 }
 
@@ -108,4 +139,4 @@ userSchema.methods.generateTemporaryToken = function () {
     }
 }
 
-export const User = mongoose.model("User", userSchema);
+export const User = mongoose.model<IUser>("User", userSchema);

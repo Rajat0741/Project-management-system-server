@@ -1,7 +1,26 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 import { AvailableTaskStatuses, TasksStatusEnum } from "../utils/constants.js"
 
-const taskSchema = new Schema({
+export interface IAttachment {
+    fileId: string;
+    url: string;
+    filePath: string;
+    thumbnail?: string;
+}
+
+export interface ITask extends Document {
+    title: string;
+    description?: string;
+    project: Types.ObjectId;
+    assignedTo?: Types.ObjectId;
+    assignedBy?: Types.ObjectId;
+    status: string;
+    attachments: IAttachment[];
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+const taskSchema = new Schema<ITask>({
     title: {
         type: String,
         required: true,
@@ -53,4 +72,4 @@ const taskSchema = new Schema({
     }
 }, { timestamps: true })
 
-export const Tasks = mongoose.model("Task", taskSchema);
+export const Tasks = mongoose.model<ITask>("Task", taskSchema);

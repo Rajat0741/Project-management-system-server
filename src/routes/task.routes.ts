@@ -5,6 +5,16 @@ import {
 } from "../middlewares/auth.middleware.js";
 import validate from "../middlewares/validator.middleware.js";
 import {
+    getTasksSchema,
+    getTaskByIdSchema,
+    createTaskSchema,
+    updateTaskSchema,
+    deleteTaskSchema,
+    assignAttachmentSchema,
+    deleteAttachmentSchema,
+    createSubtaskSchema,
+    updateSubtaskSchema,
+    deleteSubtaskSchema,
     updateSubtaskStatusSchema,
 } from "../validators/index.js";
 import { AvailableUserRole, UserRolesEnum } from "../utils/constants.js";
@@ -30,8 +40,9 @@ router.use(verifyJWT);
 // Task routes
 router
     .route("/:projectId")
-    .get(validateProjectPermission(AvailableUserRole), getTasks)
+    .get(validate(getTasksSchema), validateProjectPermission(AvailableUserRole), getTasks)
     .post(
+        validate(createTaskSchema),
         validateProjectPermission([
             UserRolesEnum.ADMIN,
             UserRolesEnum.PROJECT_ADMIN,
@@ -42,8 +53,9 @@ router
 
 router
     .route("/:projectId/:taskId")
-    .get(validateProjectPermission(AvailableUserRole), getTaskById)
+    .get(validate(getTaskByIdSchema), validateProjectPermission(AvailableUserRole), getTaskById)
     .put(
+        validate(updateTaskSchema),
         validateProjectPermission([
             UserRolesEnum.ADMIN,
             UserRolesEnum.PROJECT_ADMIN,
@@ -51,6 +63,7 @@ router
         updateTask,
     )
     .delete(
+        validate(deleteTaskSchema),
         validateProjectPermission([
             UserRolesEnum.ADMIN,
             UserRolesEnum.PROJECT_ADMIN,
@@ -62,6 +75,7 @@ router
 router
     .route("/:projectId/:taskId/attachments")
     .post(
+        validate(assignAttachmentSchema),
         validateProjectPermission([
             UserRolesEnum.ADMIN,
             UserRolesEnum.PROJECT_ADMIN,
@@ -70,6 +84,7 @@ router
         assignAttachment,
     )
     .delete(
+        validate(deleteAttachmentSchema),
         validateProjectPermission([
             UserRolesEnum.ADMIN,
             UserRolesEnum.PROJECT_ADMIN,
@@ -84,8 +99,8 @@ router
 router
     .route("/:projectId/:taskId/subtasks/:subtaskId/status")
     .patch(
-        validateProjectPermission(AvailableUserRole),
         validate(updateSubtaskStatusSchema),
+        validateProjectPermission(AvailableUserRole),
         updateSubtaskStatus,
     );
 
@@ -93,14 +108,16 @@ router
 router
     .route("/:projectId/:taskId/subtasks")
     .post(
+        validate(createSubtaskSchema),
         validateProjectPermission(AvailableUserRole),
         createSubtask,
     );
 
 router
     .route("/:projectId/:taskId/subtasks/:subtaskId")
-    .put(validateProjectPermission(AvailableUserRole), updateSubtask)
+    .put(validate(updateSubtaskSchema), validateProjectPermission(AvailableUserRole), updateSubtask)
     .delete(
+        validate(deleteSubtaskSchema),
         validateProjectPermission(AvailableUserRole),
         deleteSubtask,
     );

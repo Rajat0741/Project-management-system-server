@@ -1,11 +1,13 @@
+import type { NextFunction, Request, Response } from "express";
+
 type AsyncRouteHandler = (
-    req: any,
-    res: any,
-    next: any,
+    req: Request,
+    res: Response,
+    next: NextFunction,
 ) => Promise<unknown> | unknown;
 
 const asyncHandler = (fn: AsyncRouteHandler) => {
-    return async (req: any, res: any, next: any): Promise<void> => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             await fn(req, res, next);
         } catch (error) {

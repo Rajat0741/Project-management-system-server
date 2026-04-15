@@ -8,6 +8,12 @@ import { env } from "../config/env.js";
 import crypto from "crypto";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 
+const cookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none" as const,
+};
+
 const generateAccessAndRefreshToken = async (userId: any) => {
     try {
         const user = await User.findById(userId);
@@ -20,7 +26,7 @@ const generateAccessAndRefreshToken = async (userId: any) => {
         await user.save({ validateBeforeSave: false });
         return { accessToken, refreshToken }
     } catch (error) {
-        throw new ApiError(500, "Something went wrong while generating referesh and access token")
+        throw new ApiError(500, "Something went wrong while generating refresh and access token")
     }
 }
 
@@ -93,8 +99,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
 });
 
 const verifyEmail = asyncHandler(async (req, res) => {
-
-    const { verificationToken } = req.params;
+    const verificationToken = req.params.verificationToken as string;
 
     if (!verificationToken) {
         throw new ApiError(400, "Verification token is missing")
@@ -207,15 +212,9 @@ const login = asyncHandler(async (req, res) => {
     if (!loggedInUser) {
         throw new ApiError(500, "Something went wrong when logging in the user")
     }
-    const options = {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none'
-    }
-
     return res.status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
+        .cookie("accessToken", accessToken, cookieOptions)
+        .cookie("refreshToken", refreshToken, cookieOptions)
         .json(
             new ApiResponse(200, loggedInUser, "User logged in successfully")
         )
@@ -235,15 +234,9 @@ const logout = asyncHandler(async (req, res) => {
         }
     )
 
-    const options = {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none'
-    }
-
     return res.status(200)
-        .clearCookie("accessToken", options)
-        .clearCookie("refreshToken", options)
+        .clearCookie("accessToken", cookieOptions)
+        .clearCookie("refreshToken", cookieOptions)
         .json(new ApiResponse(200, {}, "User logged out successfully"))
 })
 
@@ -266,16 +259,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         }
         const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user?._id);
 
-        const options = {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none'
-        }
-
         return res
             .status(200)
-            .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", refreshToken, options)
+            .cookie("accessToken", accessToken, cookieOptions)
+            .cookie("refreshToken", refreshToken, cookieOptions)
             .json(
                 new ApiResponse(200, { accessToken, refreshToken }, "Access token refreshed successfully")
             )
@@ -327,7 +314,7 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
 })
 
 const resetForgotPassword = asyncHandler(async (req, res) => {
-    const { resetToken } = req.params
+    const resetToken = req.params.resetToken as string
     const { newPassword } = req.body
 
     let hashedToken = crypto

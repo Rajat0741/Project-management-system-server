@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 
 // Get all notes for a project
 const getNotes = asyncHandler(async (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.params.projectId as string;
 
     const project = await Project.findById(new mongoose.Types.ObjectId(projectId));
 
@@ -26,7 +26,7 @@ const getNotes = asyncHandler(async (req, res) => {
 
 // Get note by ID
 const getNoteById = asyncHandler(async (req, res) => {
-    const { noteId } = req.params;
+    const noteId = req.params.noteId as string;
 
     const note = await ProjectNote.findById(new mongoose.Types.ObjectId(noteId))
         .populate("lastUpdatedBy", "username fullName avatar");
@@ -42,12 +42,8 @@ const getNoteById = asyncHandler(async (req, res) => {
 
 // Create a note
 const createNote = asyncHandler(async (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.params.projectId as string;
     const { content } = req.body;
-
-    if (!content) {
-        throw new ApiError(400, "Note content is required");
-    }
 
     const project = await Project.findById(new mongoose.Types.ObjectId(projectId));
 
@@ -58,7 +54,7 @@ const createNote = asyncHandler(async (req, res) => {
     const note = await ProjectNote.create({
         project: new mongoose.Types.ObjectId(projectId),
         content,
-        lastUpdatedBy: new mongoose.Types.ObjectId(req.user.userId)
+        lastUpdatedBy: new mongoose.Types.ObjectId(req.user._id)
     });
 
     res.status(201).json(
@@ -68,12 +64,8 @@ const createNote = asyncHandler(async (req, res) => {
 
 // Update a note
 const updateNote = asyncHandler(async (req, res) => {
-    const { noteId } = req.params;
+    const noteId = req.params.noteId as string;
     const { content } = req.body;
-
-    if (!content) {
-        throw new ApiError(400, "Note content is required");
-    }
 
     const note = await ProjectNote.findById(new mongoose.Types.ObjectId(noteId));
 
@@ -82,7 +74,7 @@ const updateNote = asyncHandler(async (req, res) => {
     }
 
     note.content = content;
-    note.lastUpdatedBy = new mongoose.Types.ObjectId(req.user.userId);
+    note.lastUpdatedBy = new mongoose.Types.ObjectId(req.user._id);
 
     await note.save();
 
@@ -93,7 +85,7 @@ const updateNote = asyncHandler(async (req, res) => {
 
 // Delete a note
 const deleteNote = asyncHandler(async (req, res) => {
-    const { noteId } = req.params;
+    const noteId = req.params.noteId as string;
 
     const deletedNote = await ProjectNote.findByIdAndDelete(new mongoose.Types.ObjectId(noteId));
 

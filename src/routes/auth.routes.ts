@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { registerUser, verifyEmail, resendVerificationToken, login, logout, refreshAccessToken, changeCurrentPassword, forgotPasswordRequest, resetForgotPassword, getCurrentUser, changeAvatar } from "../controllers/auth.controllers.js";
 import validate from "../middlewares/validator.middleware.js";
-import { registerSchema, resendVerificationTokenSchema, userLoginSchema, forgotPasswordSchema, userChangeCurrentPasswordSchema, userChangeForgotPasswordSchema } from "../validators/index.js";
+import { registerSchema, verifyEmailSchema, resendVerificationTokenSchema, userLoginSchema, forgotPasswordSchema, userChangeCurrentPasswordSchema, userChangeForgotPasswordSchema } from "../validators/index.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { uploadAvatar } from "../middlewares/multer.middleware.js";
 
@@ -10,7 +10,7 @@ const router = Router();
 //public routes
 router.route("/register").post(validate(registerSchema), registerUser);
 router.route("/resend-email-verification").post(validate(resendVerificationTokenSchema), resendVerificationToken)
-router.route("/verify-email/:verificationToken").get(verifyEmail);
+router.route("/verify-email/:verificationToken").get(validate(verifyEmailSchema), verifyEmail);
 
 router.route("/login").post(validate(userLoginSchema), login);
 router.route("/refresh-token").post(refreshAccessToken);

@@ -41,7 +41,7 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
 
 const validateProjectPermission = (roles: string[] = []) => {
     return asyncHandler(async (req, res, next) => {
-        const { projectId } = req.params;
+        const projectId = req.params.projectId as string;
 
         if (!projectId) {
             throw new ApiError(400, "Project ID is required")

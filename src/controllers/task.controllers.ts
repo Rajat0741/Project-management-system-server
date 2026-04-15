@@ -15,7 +15,7 @@ import mongoose from "mongoose";
 
 // Get all tasks for a project
 const getTasks = asyncHandler(async (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.params.projectId as string;
     const project = await Project.findById(
         new mongoose.Types.ObjectId(projectId),
     );
@@ -43,7 +43,7 @@ const getTasks = asyncHandler(async (req, res) => {
 
 // Get task by ID
 const getTaskById = asyncHandler(async (req, res) => {
-    const { taskId } = req.params;
+    const taskId = req.params.taskId as string;
     const task = await Tasks.aggregate([
         {
             $match: {
@@ -133,7 +133,7 @@ const getTaskById = asyncHandler(async (req, res) => {
 // Create a new task
 const createTask = asyncHandler(async (req, res) => {
     const { title, description, assignedTo, status, subtasks } = req.body;
-    const { projectId } = req.params;
+    const projectId = req.params.projectId as string;
 
     const project = await Project.findById(projectId);
 
@@ -167,7 +167,7 @@ const createTask = asyncHandler(async (req, res) => {
             title: subtask.title,
             task: task._id,
             isCompleted: false,
-            createdBy: new mongoose.Types.ObjectId(req.user.userId),
+            createdBy: new mongoose.Types.ObjectId(req.user._id),
         }));
 
         createdSubtasks = await Subtask.insertMany(subtaskDocuments);
@@ -208,7 +208,7 @@ const createTask = asyncHandler(async (req, res) => {
 
 // Update a task
 const updateTask = asyncHandler(async (req, res) => {
-    const { taskId } = req.params;
+    const taskId = req.params.taskId as string;
     const { title, description, assignedTo, status } = req.body;
     const task = await Tasks.findById(new mongoose.Types.ObjectId(taskId));
 
@@ -253,7 +253,7 @@ const updateTask = asyncHandler(async (req, res) => {
 
 // Delete a task
 const deleteTask = asyncHandler(async (req, res) => {
-    const { taskId } = req.params;
+    const taskId = req.params.taskId as string;
 
     const task = await Tasks.findById(new mongoose.Types.ObjectId(taskId));
 
@@ -280,7 +280,7 @@ const deleteTask = asyncHandler(async (req, res) => {
 
 // Create a subtask
 const createSubtask = asyncHandler(async (req, res) => {
-    const { taskId } = req.params;
+    const taskId = req.params.taskId as string;
     const { title } = req.body;
 
     const task = await Tasks.findById(new mongoose.Types.ObjectId(taskId));
@@ -293,7 +293,7 @@ const createSubtask = asyncHandler(async (req, res) => {
         title,
         task: new mongoose.Types.ObjectId(taskId),
         isCompleted: false,
-        createdBy: new mongoose.Types.ObjectId(req.user.userId),
+        createdBy: new mongoose.Types.ObjectId(req.user._id),
     });
 
     res.status(201).json(
@@ -303,7 +303,7 @@ const createSubtask = asyncHandler(async (req, res) => {
 
 // Update a subtask
 const updateSubtask = asyncHandler(async (req, res) => {
-    const { subtaskId } = req.params;
+    const subtaskId = req.params.subtaskId as string;
     const { title, isCompleted } = req.body;
 
     const subtask = await Subtask.findById(
@@ -328,7 +328,7 @@ const updateSubtask = asyncHandler(async (req, res) => {
 
 // Delete a subtask
 const deleteSubtask = asyncHandler(async (req, res) => {
-    const { subtaskId } = req.params;
+    const subtaskId = req.params.subtaskId as string;
 
     const deletedSubtask = await Subtask.findByIdAndDelete(
         new mongoose.Types.ObjectId(subtaskId),
@@ -345,7 +345,8 @@ const deleteSubtask = asyncHandler(async (req, res) => {
 
 // Assign attachment to a task (single file per request)
 const assignAttachment = asyncHandler(async (req, res) => {
-    const { projectId, taskId } = req.params;
+    const projectId = req.params.projectId as string;
+    const taskId = req.params.taskId as string;
 
     if (!req.file) {
         throw new ApiError(400, "Attachment file is required");
@@ -387,7 +388,7 @@ const assignAttachment = asyncHandler(async (req, res) => {
 
 // Update subtask status and auto-update parent task status
 const updateSubtaskStatus = asyncHandler(async (req, res) => {
-    const { subtaskId } = req.params;
+    const subtaskId = req.params.subtaskId as string;
     const { isCompleted } = req.body;
 
     const subtask = await Subtask.findById(new mongoose.Types.ObjectId(subtaskId));
@@ -405,7 +406,9 @@ const updateSubtaskStatus = asyncHandler(async (req, res) => {
 
     // Only the assigned member or admin/project_admin can update subtask status
     const isAssigned = task.assignedTo?.toString() === req.user._id.toString();
-    const isAdmin = [UserRolesEnum.ADMIN, UserRolesEnum.PROJECT_ADMIN].includes(req.user.role);
+    const isAdmin =
+        req.user.role === UserRolesEnum.ADMIN ||
+        req.user.role === UserRolesEnum.PROJECT_ADMIN;
 
     if (!isAssigned && !isAdmin) {
         throw new ApiError(403, "Only the assigned member or an admin can update subtask status");
@@ -440,7 +443,7 @@ const updateSubtaskStatus = asyncHandler(async (req, res) => {
 
 // Delete attachment from a task
 const deleteAttachment = asyncHandler(async (req, res) => {
-    const { taskId } = req.params;
+    const taskId = req.params.taskId as string;
     const { fileId } = req.body;
 
     if (!fileId) {

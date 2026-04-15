@@ -70,7 +70,7 @@ const getProjects = asyncHandler(async (req, res) => {
 });
 
 const getProjectById = asyncHandler(async (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.params.projectId as string;
 
     const project = await Project.findById(projectId);
 
@@ -105,7 +105,7 @@ const createProject = asyncHandler(async (req, res) => {
 
 const updateProject = asyncHandler(async (req, res) => {
     const { name, description } = req.body;
-    const { projectId } = req.params;
+    const projectId = req.params.projectId as string;
 
     const project = await Project.findByIdAndUpdate(
         projectId,
@@ -128,7 +128,7 @@ const updateProject = asyncHandler(async (req, res) => {
 });
 
 const deleteProject = asyncHandler(async (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.params.projectId as string;
 
     const project = await Project.findByIdAndDelete(projectId);
 
@@ -147,7 +147,7 @@ const deleteProject = asyncHandler(async (req, res) => {
 
 const addMemberToProject = asyncHandler(async (req, res) => {
     const { email, role } = req.body;
-    const { projectId } = req.params;
+    const projectId = req.params.projectId as string;
 
     const user = await User.findOne({
         email,
@@ -182,7 +182,7 @@ const addMemberToProject = asyncHandler(async (req, res) => {
 });
 
 const getProjectMembers = asyncHandler(async (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.params.projectId as string;
 
     const projectMembers = await ProjectMember.aggregate([
         // Match project members by projectId to get members of specific project
@@ -241,7 +241,8 @@ const getProjectMembers = asyncHandler(async (req, res) => {
 
 const updateMemberRole = asyncHandler(async (req, res) => {
     const { role } = req.body;
-    const { projectId, userId } = req.params;
+    const projectId = req.params.projectId as string;
+    const userId = req.params.userId as string;
 
     const projectMember = await ProjectMember.findOneAndUpdate(
         {
@@ -270,7 +271,8 @@ const updateMemberRole = asyncHandler(async (req, res) => {
 });
 
 const deleteMember = asyncHandler(async (req, res) => {
-    const { projectId, userId } = req.params;
+    const projectId = req.params.projectId as string;
+    const userId = req.params.userId as string;
 
     const deletedMember = await ProjectMember.findOneAndDelete({
         project: new mongoose.Types.ObjectId(projectId),
@@ -291,7 +293,7 @@ const deleteMember = asyncHandler(async (req, res) => {
 });
 
 const leaveProject = asyncHandler(async (req, res) => {
-    const { projectId } = req.params;
+    const projectId = req.params.projectId as string;
     const userId = req.user._id;
 
     const projectMember = await ProjectMember.findOne({

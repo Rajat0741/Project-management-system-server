@@ -9,15 +9,11 @@ const validate = (schema: z.ZodTypeAny) =>
                 body: req.body,
                 query: req.query,
                 params: req.params,
-            });
+            }) as Record<string, any>;
 
-            if (
-                typeof parsed === "object" &&
-                parsed !== null &&
-                "body" in parsed
-            ) {
-                req.body = (parsed as { body: unknown }).body;
-            }
+            if ("body" in parsed)   req.body  = (parsed as any).body;
+            if ("query" in parsed)  req.query = (parsed as any).query;
+            if ("params" in parsed) Object.assign(req.params, (parsed as any).params);
 
             next();
         } catch (error: unknown) {

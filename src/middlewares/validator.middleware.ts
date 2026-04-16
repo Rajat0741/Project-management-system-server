@@ -18,7 +18,6 @@ const validate = (schema: z.ZodTypeAny) =>
             next();
         } catch (error: unknown) {
             if (error instanceof z.ZodError) {
-                console.log("Validation error:", error.issues);
                 throw new ApiError(
                     400,
                     "Validation failed",

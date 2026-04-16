@@ -46,12 +46,12 @@ router
         getTasks,
     )
     .post(
+        uploadAttachment.array("attachments"),
         validate(createTaskSchema),
         validateProjectPermission([
             UserRolesEnum.ADMIN,
             UserRolesEnum.PROJECT_ADMIN,
         ]),
-        uploadAttachment.array("attachments"),
         createTask,
     );
 

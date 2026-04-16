@@ -53,7 +53,7 @@ A full-featured backend API for managing projects, tasks, team members, and note
 - **Google APIs** - Gmail OAuth2 integration
 
 ### Validation
-- **express-validator v7.3.1** - Request data validation
+- **Zod** - Schema-based request data validation
 
 ## 📦 Prerequisites
 

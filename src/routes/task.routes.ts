@@ -16,7 +16,7 @@ import {
     updateSubtaskSchema,
     deleteSubtaskSchema,
     updateSubtaskStatusSchema,
-} from "../validators/index.js";
+} from "../validators/task.validators.js";
 import { AvailableUserRole, UserRolesEnum } from "../utils/constants.js";
 import { uploadAttachment } from "../middlewares/multer.middleware.js";
 import {
@@ -40,7 +40,11 @@ router.use(verifyJWT);
 // Task routes
 router
     .route("/:projectId")
-    .get(validate(getTasksSchema), validateProjectPermission(AvailableUserRole), getTasks)
+    .get(
+        validate(getTasksSchema),
+        validateProjectPermission(AvailableUserRole),
+        getTasks,
+    )
     .post(
         validate(createTaskSchema),
         validateProjectPermission([
@@ -53,7 +57,11 @@ router
 
 router
     .route("/:projectId/:taskId")
-    .get(validate(getTaskByIdSchema), validateProjectPermission(AvailableUserRole), getTaskById)
+    .get(
+        validate(getTaskByIdSchema),
+        validateProjectPermission(AvailableUserRole),
+        getTaskById,
+    )
     .put(
         validate(updateTaskSchema),
         validateProjectPermission([
@@ -92,10 +100,6 @@ router
         deleteAttachment,
     );
 
-// Status update routes
-router
-    .route("/:projectId/:taskId/status")
-
 router
     .route("/:projectId/:taskId/subtasks/:subtaskId/status")
     .patch(
@@ -115,7 +119,11 @@ router
 
 router
     .route("/:projectId/:taskId/subtasks/:subtaskId")
-    .put(validate(updateSubtaskSchema), validateProjectPermission(AvailableUserRole), updateSubtask)
+    .put(
+        validate(updateSubtaskSchema),
+        validateProjectPermission(AvailableUserRole),
+        updateSubtask,
+    )
     .delete(
         validate(deleteSubtaskSchema),
         validateProjectPermission(AvailableUserRole),

@@ -12,10 +12,25 @@ import {
     deleteFiles,
 } from "../utils/imagekit.js";
 import mongoose from "mongoose";
+import type {
+    GetTasksSchemaType,
+    GetTaskByIdSchemaType,
+    CreateTaskSchemaType,
+    UpdateTaskSchemaType,
+    DeleteTaskSchemaType,
+    AssignAttachmentSchemaType,
+    DeleteAttachmentSchemaType,
+    CreateSubtaskSchemaType,
+    UpdateSubtaskSchemaType,
+    DeleteSubtaskSchemaType,
+    UpdateTaskStatusSchemaType,
+    UpdateSubtaskStatusSchemaType,
+} from "../validators/task.validators.js";
 
 // Get all tasks for a project
 const getTasks = asyncHandler(async (req, res) => {
-    const projectId = req.params.projectId as string;
+    const params = req.params as GetTasksSchemaType["params"];
+    const projectId = params.projectId;
     const project = await Project.findById(
         new mongoose.Types.ObjectId(projectId),
     );
@@ -27,13 +42,13 @@ const getTasks = asyncHandler(async (req, res) => {
     }).populate("assignedTo", "avatar username fullName");
 
     // Filter attachments to send only necessary fields
-    const filteredTasks = tasks.map(task => ({
+    const filteredTasks = tasks.map((task) => ({
         ...task.toObject(),
-        attachments: task.attachments.map(att => ({
+        attachments: task.attachments.map((att) => ({
             fileId: att.fileId,
             url: att.url,
-            thumbnail: att.thumbnail
-        }))
+            thumbnail: att.thumbnail,
+        })),
     }));
 
     res.status(200).json(
@@ -43,7 +58,8 @@ const getTasks = asyncHandler(async (req, res) => {
 
 // Get task by ID
 const getTaskById = asyncHandler(async (req, res) => {
-    const taskId = req.params.taskId as string;
+    const params = req.params as GetTaskByIdSchemaType["params"];
+    const taskId = params.taskId;
     const task = await Tasks.aggregate([
         {
             $match: {
@@ -132,8 +148,10 @@ const getTaskById = asyncHandler(async (req, res) => {
 
 // Create a new task
 const createTask = asyncHandler(async (req, res) => {
-    const { title, description, assignedTo, status, subtasks } = req.body;
-    const projectId = req.params.projectId as string;
+    const params = req.params as CreateTaskSchemaType["params"];
+    const body = req.body as CreateTaskSchemaType["body"];
+    const { title, description, assignedTo, status, subtasks } = body;
+    const projectId = params.projectId;
 
     const project = await Project.findById(projectId);
 
@@ -174,11 +192,13 @@ const createTask = asyncHandler(async (req, res) => {
     }
 
     // Handle attachments if any
-    const uploadedFiles = (req.files as Express.Multer.File[] | undefined) ?? [];
+    const uploadedFiles =
+        (req.files as Express.Multer.File[] | undefined) ?? [];
 
     if (uploadedFiles.length > 0) {
-        const attachmentPromises = uploadedFiles.map((file: Express.Multer.File) =>
-            uploadToImageKit(file, projectId, task._id.toString()),
+        const attachmentPromises = uploadedFiles.map(
+            (file: Express.Multer.File) =>
+                uploadToImageKit(file, projectId, task._id.toString()),
         );
         const attachments = await Promise.all(attachmentPromises);
 
@@ -190,26 +210,24 @@ const createTask = asyncHandler(async (req, res) => {
     const taskResponse = {
         ...task.toObject(),
         subtasks: createdSubtasks,
-        attachments: task.attachments.map(att => ({
+        attachments: task.attachments.map((att) => ({
             fileId: att.fileId,
             url: att.url,
-            thumbnail: att.thumbnail
-        }))
+            thumbnail: att.thumbnail,
+        })),
     };
 
     res.status(201).json(
-        new ApiResponse(
-            201,
-            taskResponse,
-            "Task Created successfully",
-        ),
+        new ApiResponse(201, taskResponse, "Task Created successfully"),
     );
 });
 
 // Update a task
 const updateTask = asyncHandler(async (req, res) => {
-    const taskId = req.params.taskId as string;
-    const { title, description, assignedTo, status } = req.body;
+    const params = req.params as UpdateTaskSchemaType["params"];
+    const body = req.body as UpdateTaskSchemaType["body"];
+    const taskId = params.taskId;
+    const { title, description, assignedTo, status } = body;
     const task = await Tasks.findById(new mongoose.Types.ObjectId(taskId));
 
     if (!task) {
@@ -239,11 +257,11 @@ const updateTask = asyncHandler(async (req, res) => {
     // Filter attachments before sending response
     const taskResponse = {
         ...task.toObject(),
-        attachments: task.attachments.map(att => ({
+        attachments: task.attachments.map((att) => ({
             fileId: att.fileId,
             url: att.url,
-            thumbnail: att.thumbnail
-        }))
+            thumbnail: att.thumbnail,
+        })),
     };
 
     res.status(200).json(
@@ -253,7 +271,8 @@ const updateTask = asyncHandler(async (req, res) => {
 
 // Delete a task
 const deleteTask = asyncHandler(async (req, res) => {
-    const taskId = req.params.taskId as string;
+    const params = req.params as DeleteTaskSchemaType["params"];
+    const taskId = params.taskId;
 
     const task = await Tasks.findById(new mongoose.Types.ObjectId(taskId));
 
@@ -280,8 +299,10 @@ const deleteTask = asyncHandler(async (req, res) => {
 
 // Create a subtask
 const createSubtask = asyncHandler(async (req, res) => {
-    const taskId = req.params.taskId as string;
-    const { title } = req.body;
+    const params = req.params as CreateSubtaskSchemaType["params"];
+    const body = req.body as CreateSubtaskSchemaType["body"];
+    const taskId = params.taskId;
+    const { title } = body;
 
     const task = await Tasks.findById(new mongoose.Types.ObjectId(taskId));
 
@@ -303,8 +324,10 @@ const createSubtask = asyncHandler(async (req, res) => {
 
 // Update a subtask
 const updateSubtask = asyncHandler(async (req, res) => {
-    const subtaskId = req.params.subtaskId as string;
-    const { title, isCompleted } = req.body;
+    const params = req.params as UpdateSubtaskSchemaType["params"];
+    const body = req.body as UpdateSubtaskSchemaType["body"];
+    const subtaskId = params.subtaskId;
+    const { title, isCompleted } = body;
 
     const subtask = await Subtask.findById(
         new mongoose.Types.ObjectId(subtaskId),
@@ -328,7 +351,8 @@ const updateSubtask = asyncHandler(async (req, res) => {
 
 // Delete a subtask
 const deleteSubtask = asyncHandler(async (req, res) => {
-    const subtaskId = req.params.subtaskId as string;
+    const params = req.params as DeleteSubtaskSchemaType["params"];
+    const subtaskId = params.subtaskId;
 
     const deletedSubtask = await Subtask.findByIdAndDelete(
         new mongoose.Types.ObjectId(subtaskId),
@@ -345,8 +369,9 @@ const deleteSubtask = asyncHandler(async (req, res) => {
 
 // Assign attachment to a task (single file per request)
 const assignAttachment = asyncHandler(async (req, res) => {
-    const projectId = req.params.projectId as string;
-    const taskId = req.params.taskId as string;
+    const params = req.params as AssignAttachmentSchemaType["params"];
+    const projectId = params.projectId;
+    const taskId = params.taskId;
 
     if (!req.file) {
         throw new ApiError(400, "Attachment file is required");
@@ -374,7 +399,7 @@ const assignAttachment = asyncHandler(async (req, res) => {
     const filteredAttachment = {
         fileId: attachmentData.fileId,
         url: attachmentData.url,
-        thumbnail: attachmentData.thumbnail
+        thumbnail: attachmentData.thumbnail,
     };
 
     res.status(200).json(
@@ -388,10 +413,14 @@ const assignAttachment = asyncHandler(async (req, res) => {
 
 // Update subtask status and auto-update parent task status
 const updateSubtaskStatus = asyncHandler(async (req, res) => {
-    const subtaskId = req.params.subtaskId as string;
-    const { isCompleted } = req.body;
+    const params = req.params as UpdateSubtaskStatusSchemaType["params"];
+    const body = req.body as UpdateSubtaskStatusSchemaType["body"];
+    const subtaskId = params.subtaskId;
+    const { isCompleted } = body;
 
-    const subtask = await Subtask.findById(new mongoose.Types.ObjectId(subtaskId));
+    const subtask = await Subtask.findById(
+        new mongoose.Types.ObjectId(subtaskId),
+    );
 
     if (!subtask) {
         throw new ApiError(404, "Subtask not found");
@@ -411,7 +440,10 @@ const updateSubtaskStatus = asyncHandler(async (req, res) => {
         req.user.role === UserRolesEnum.PROJECT_ADMIN;
 
     if (!isAssigned && !isAdmin) {
-        throw new ApiError(403, "Only the assigned member or an admin can update subtask status");
+        throw new ApiError(
+            403,
+            "Only the assigned member or an admin can update subtask status",
+        );
     }
 
     subtask.isCompleted = isCompleted;
@@ -443,8 +475,10 @@ const updateSubtaskStatus = asyncHandler(async (req, res) => {
 
 // Delete attachment from a task
 const deleteAttachment = asyncHandler(async (req, res) => {
-    const taskId = req.params.taskId as string;
-    const { fileId } = req.body;
+    const params = req.params as DeleteAttachmentSchemaType["params"];
+    const body = req.body as DeleteAttachmentSchemaType["body"];
+    const taskId = params.taskId;
+    const { fileId } = body;
 
     if (!fileId) {
         throw new ApiError(400, "File ID is required");

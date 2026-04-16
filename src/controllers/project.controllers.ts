@@ -12,6 +12,17 @@ import {
     AvailableUserRole,
     UserRolesEnum,
 } from "../utils/constants.js";
+import type {
+    GetProjectByIdSchemaType,
+    CreateProjectSchemaType,
+    UpdateProjectSchemaType,
+    DeleteProjectSchemaType,
+    AddMemberToProjectSchemaType,
+    GetProjectMembersSchemaType,
+    UpdateMemberRoleSchemaType,
+    DeleteMemberSchemaType,
+    LeaveProjectSchemaType,
+} from "../validators/project.validators.js";
 
 const getProjects = asyncHandler(async (req, res) => {
     const projects = await ProjectMember.aggregate([
@@ -70,7 +81,8 @@ const getProjects = asyncHandler(async (req, res) => {
 });
 
 const getProjectById = asyncHandler(async (req, res) => {
-    const projectId = req.params.projectId as string;
+    const params = req.params as GetProjectByIdSchemaType["params"];
+    const projectId = params.projectId;
 
     const project = await Project.findById(projectId);
 
@@ -84,7 +96,8 @@ const getProjectById = asyncHandler(async (req, res) => {
 });
 
 const createProject = asyncHandler(async (req, res) => {
-    const { name, description } = req.body;
+    const body = req.body as CreateProjectSchemaType["body"];
+    const { name, description } = body;
 
     const project = await Project.create({
         name,
@@ -104,8 +117,10 @@ const createProject = asyncHandler(async (req, res) => {
 });
 
 const updateProject = asyncHandler(async (req, res) => {
-    const { name, description } = req.body;
-    const projectId = req.params.projectId as string;
+    const params = req.params as UpdateProjectSchemaType["params"];
+    const body = req.body as UpdateProjectSchemaType["body"];
+    const { name, description } = body;
+    const projectId = params.projectId;
 
     const project = await Project.findByIdAndUpdate(
         projectId,
@@ -128,7 +143,8 @@ const updateProject = asyncHandler(async (req, res) => {
 });
 
 const deleteProject = asyncHandler(async (req, res) => {
-    const projectId = req.params.projectId as string;
+    const params = req.params as DeleteProjectSchemaType["params"];
+    const projectId = params.projectId;
 
     const project = await Project.findByIdAndDelete(projectId);
 
@@ -146,8 +162,10 @@ const deleteProject = asyncHandler(async (req, res) => {
 });
 
 const addMemberToProject = asyncHandler(async (req, res) => {
-    const { email, role } = req.body;
-    const projectId = req.params.projectId as string;
+    const params = req.params as AddMemberToProjectSchemaType["params"];
+    const body = req.body as AddMemberToProjectSchemaType["body"];
+    const { email, role } = body;
+    const projectId = params.projectId;
 
     const user = await User.findOne({
         email,
@@ -182,7 +200,8 @@ const addMemberToProject = asyncHandler(async (req, res) => {
 });
 
 const getProjectMembers = asyncHandler(async (req, res) => {
-    const projectId = req.params.projectId as string;
+    const params = req.params as GetProjectMembersSchemaType["params"];
+    const projectId = params.projectId;
 
     const projectMembers = await ProjectMember.aggregate([
         // Match project members by projectId to get members of specific project
@@ -240,9 +259,11 @@ const getProjectMembers = asyncHandler(async (req, res) => {
 });
 
 const updateMemberRole = asyncHandler(async (req, res) => {
-    const { role } = req.body;
-    const projectId = req.params.projectId as string;
-    const userId = req.params.userId as string;
+    const params = req.params as UpdateMemberRoleSchemaType["params"];
+    const body = req.body as UpdateMemberRoleSchemaType["body"];
+    const { role } = body;
+    const projectId = params.projectId;
+    const userId = params.userId;
 
     const projectMember = await ProjectMember.findOneAndUpdate(
         {
@@ -271,8 +292,9 @@ const updateMemberRole = asyncHandler(async (req, res) => {
 });
 
 const deleteMember = asyncHandler(async (req, res) => {
-    const projectId = req.params.projectId as string;
-    const userId = req.params.userId as string;
+    const params = req.params as DeleteMemberSchemaType["params"];
+    const projectId = params.projectId;
+    const userId = params.userId;
 
     const deletedMember = await ProjectMember.findOneAndDelete({
         project: new mongoose.Types.ObjectId(projectId),
@@ -293,7 +315,8 @@ const deleteMember = asyncHandler(async (req, res) => {
 });
 
 const leaveProject = asyncHandler(async (req, res) => {
-    const projectId = req.params.projectId as string;
+    const params = req.params as LeaveProjectSchemaType["params"];
+    const projectId = params.projectId;
     const userId = req.user._id;
 
     const projectMember = await ProjectMember.findOne({

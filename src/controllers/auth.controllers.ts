@@ -7,6 +7,8 @@ import { uploadAvatar as uploadAvatarToImageKit, deleteFile } from "../utils/ima
 import { env } from "../config/env.js";
 import crypto from "crypto";
 import jwt, { type JwtPayload } from "jsonwebtoken";
+import { Types } from "mongoose";
+import { NextFunction, Request, Response } from "express";
 
 const cookieOptions = {
     httpOnly: true,
@@ -14,7 +16,7 @@ const cookieOptions = {
     sameSite: "none" as const,
 };
 
-const generateAccessAndRefreshToken = async (userId: any) => {
+const generateAccessAndRefreshToken = async (userId: Types.ObjectId) => {
     try {
         const user = await User.findById(userId);
         if (!user) {
@@ -30,7 +32,7 @@ const generateAccessAndRefreshToken = async (userId: any) => {
     }
 }
 
-const registerUser = asyncHandler(async (req, res, next) => {
+const registerUser = asyncHandler(async (req:Request, res:Response, next:NextFunction) => {
     const { email, username, password, fullName } = req.body
 
     const existedUser = await User.findOne({ email })

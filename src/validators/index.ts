@@ -56,7 +56,6 @@ export const registerSchema = z.object({
         username: z
             .string()
             .trim()
-            .min(1, "Username is required")
             .refine((value) => value === value.toLowerCase(), {
                 message: "Username should be in lowercase",
             })

@@ -6,8 +6,9 @@ import asyncHandler from "../utils/asyncHandler.js";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import mongoose from "mongoose";
 import { env } from "../config/env.js";
+import { NextFunction, Request, Response } from "express";
 
-const verifyJWT = asyncHandler(async (req, res, next) => {
+const verifyJWT = asyncHandler(async (req:Request, res:Response, next:NextFunction) => {
     const token = req.cookies?.accessToken || 
         req.header("Authorization")?.replace("Bearer", "").trim();
 
@@ -40,7 +41,7 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
 });
 
 const validateProjectPermission = (roles: string[] = []) => {
-    return asyncHandler(async (req, res, next) => {
+    return asyncHandler(async (req:Request, res:Response, next:NextFunction) => {
         const projectId = req.params.projectId as string;
 
         if (!projectId) {

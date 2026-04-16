@@ -5,7 +5,7 @@ import ApiError from "../utils/api-errors.js";
 const validate = (schema: z.ZodTypeAny) =>
     async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
         try {
-            const parsed = await schema.parseAsync({
+            const parsed = await schema.parse({
                 body: req.body,
                 query: req.query,
                 params: req.params,

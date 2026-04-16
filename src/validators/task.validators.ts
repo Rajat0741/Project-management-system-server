@@ -29,6 +29,16 @@ export const createTaskSchema = z.object({
             .min(1, "Assigned Member is required")
             .regex(mongoIdRegex, "Invalid Project Member ID"),
         status: statusSchema.optional(),
+        subtasks: z
+            .array(
+                z.object({
+                    title: z
+                        .string()
+                        .trim()
+                        .min(1, "Subtask title is required"),
+                }),
+            )
+            .optional(),
     }),
 });
 export type CreateTaskSchemaType = z.infer<typeof createTaskSchema>;

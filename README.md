@@ -111,7 +111,7 @@ Create a `.env` file in the root directory with the following variables:
 ```env
 # Server Configuration
 PORT=3000
-CORS_ORIGIN=http://localhost:5173
+CORS_ORIGIN=http://localhost:5173,http://localhost:4173
 
 # Database
 MONGO_URI

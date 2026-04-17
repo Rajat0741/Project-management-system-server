@@ -3,6 +3,9 @@ import "dotenv/config";
 const NODE_ENV: string = process.env.NODE_ENV ?? "development";
 const PORT: number = Number(process.env.PORT ?? 3000);
 const CORS_ORIGIN: string = process.env.CORS_ORIGIN ?? "";
+const CORS_ORIGINS: string[] = CORS_ORIGIN.split(",")
+    .map((origin) => origin.trim())
+    .filter((origin) => origin.length > 0);
 const MONGO_URI: string = process.env.MONGO_URI ?? "";
 
 const ACCESS_TOKEN_SECRET: string = process.env.ACCESS_TOKEN_SECRET ?? "";
@@ -48,10 +51,15 @@ if (!Number.isFinite(PORT)) {
     throw new Error("[env] PORT must be a valid number");
 }
 
+if (CORS_ORIGINS.length === 0) {
+    throw new Error("[env] CORS_ORIGIN must include at least one valid origin");
+}
+
 export const env = {
     NODE_ENV,
     PORT,
     CORS_ORIGIN,
+    CORS_ORIGINS,
     MONGO_URI,
     ACCESS_TOKEN_SECRET,
     ACCESS_TOKEN_EXPIRY,

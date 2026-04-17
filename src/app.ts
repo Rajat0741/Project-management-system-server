@@ -9,7 +9,7 @@ const app = express();
 
 // CORS configuration
 app.use(cors({
-    origin: env.CORS_ORIGIN,
+    origin: env.CORS_ORIGINS,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],

@@ -3,6 +3,10 @@ import {
     verifyJWT,
     validateProjectPermission,
 } from "../middlewares/auth.middleware.js";
+import {
+    validateTaskOwnership,
+    validateSubtaskOwnership,
+} from "../middlewares/resource-guard.middleware.js";
 import validate from "../middlewares/validator.middleware.js";
 import {
     getTasksSchema,
@@ -32,6 +36,7 @@ import {
     assignAttachment,
     deleteAttachment,
 } from "../controllers/task.controllers.js";
+import ApiError from "../utils/api-errors.js";
 
 const router = Router();
 
@@ -54,7 +59,12 @@ router
                 try {
                     req.body.subtasks = JSON.parse(req.body.subtasks);
                 } catch {
-                    req.body.subtasks = undefined;
+                    return next(
+                        new ApiError(
+                            400,
+                            "Invalid JSON in subtasks field",
+                        ),
+                    );
                 }
             }
             next();
@@ -72,6 +82,7 @@ router
     .get(
         validate(getTaskByIdSchema),
         validateProjectPermission(AvailableUserRole),
+        validateTaskOwnership,
         getTaskById,
     )
     .put(
@@ -80,6 +91,7 @@ router
             UserRolesEnum.ADMIN,
             UserRolesEnum.PROJECT_ADMIN,
         ]),
+        validateTaskOwnership,
         updateTask,
     )
     .delete(
@@ -88,6 +100,7 @@ router
             UserRolesEnum.ADMIN,
             UserRolesEnum.PROJECT_ADMIN,
         ]),
+        validateTaskOwnership,
         deleteTask,
     );
 
@@ -100,6 +113,7 @@ router
             UserRolesEnum.ADMIN,
             UserRolesEnum.PROJECT_ADMIN,
         ]),
+        validateTaskOwnership,
         uploadAttachment.single("file"),
         assignAttachment,
     )
@@ -109,14 +123,18 @@ router
             UserRolesEnum.ADMIN,
             UserRolesEnum.PROJECT_ADMIN,
         ]),
+        validateTaskOwnership,
         deleteAttachment,
     );
 
+// Subtask status — more specific path must be registered before the generic subtask route
 router
     .route("/:projectId/:taskId/subtasks/:subtaskId/status")
     .patch(
         validate(updateSubtaskStatusSchema),
         validateProjectPermission(AvailableUserRole),
+        validateTaskOwnership,
+        validateSubtaskOwnership,
         updateSubtaskStatus,
     );
 
@@ -126,6 +144,7 @@ router
     .post(
         validate(createSubtaskSchema),
         validateProjectPermission(AvailableUserRole),
+        validateTaskOwnership,
         createSubtask,
     );
 
@@ -134,11 +153,15 @@ router
     .put(
         validate(updateSubtaskSchema),
         validateProjectPermission(AvailableUserRole),
+        validateTaskOwnership,
+        validateSubtaskOwnership,
         updateSubtask,
     )
     .delete(
         validate(deleteSubtaskSchema),
         validateProjectPermission(AvailableUserRole),
+        validateTaskOwnership,
+        validateSubtaskOwnership,
         deleteSubtask,
     );
 

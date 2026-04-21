@@ -1,10 +1,9 @@
 import { Tasks } from "../../models/task.models.js";
 import ApiError from "../../utils/api-errors.js";
-import { ensureProjectExists, toObjectId } from "../shared/index.js";
+import { toObjectId } from "../shared/index.js";
 import { mapTasksWithFilteredAttachments } from "./task-mapper.service.js";
 
 const getTasksService = async (projectId: string) => {
-    await ensureProjectExists(projectId);
 
     const tasks = await Tasks.find({
         project: toObjectId(projectId),
@@ -13,11 +12,14 @@ const getTasksService = async (projectId: string) => {
     return mapTasksWithFilteredAttachments(tasks);
 };
 
-const getTaskByIdService = async (taskId: string) => {
+const getTaskByIdService = async (projectId: string, taskId: string) => {
+
     const task = await Tasks.aggregate([
         {
             $match: {
+                // Enforce project/task linkage at query level to prevent cross-project reads.
                 _id: toObjectId(taskId),
+                project: toObjectId(projectId),
             },
         },
         {

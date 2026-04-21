@@ -40,7 +40,7 @@ const getTasks = asyncHandler(async (req, res) => {
 
 const getTaskById = asyncHandler(async (req, res) => {
     const params = req.params as GetTaskByIdSchemaType["params"];
-    const task = await getTaskByIdService(params.taskId);
+    const task = await getTaskByIdService(params.projectId, params.taskId);
 
     res.status(200).json(
         new ApiResponse(200, task, "Task and Subtasks fetched successfully"),
@@ -77,13 +77,13 @@ const updateTask = asyncHandler(async (req, res) => {
     const params = req.params as UpdateTaskSchemaType["params"];
     const body = req.body as UpdateTaskSchemaType["body"];
 
-    const task = await updateTaskService({
-        taskId: params.taskId,
-        title: body.title,
-        description: body.description,
-        assignedTo: body.assignedTo,
-        status: body.status,
-    });
+    const task = await updateTaskService(
+        params.taskId,
+        body.title,
+        body.description,
+        body.assignedTo,
+        body.status,
+    );
 
     res.status(200).json(
         new ApiResponse(
@@ -107,11 +107,11 @@ const createSubtask = asyncHandler(async (req, res) => {
     const params = req.params as CreateSubtaskSchemaType["params"];
     const body = req.body as CreateSubtaskSchemaType["body"];
 
-    const subtask = await createSubtaskService({
-        taskId: params.taskId,
-        title: body.title,
-        userId: req.user._id,
-    });
+    const subtask = await createSubtaskService(
+        params.taskId,
+        body.title,
+        req.user._id,
+    );
 
     res.status(201).json(
         new ApiResponse(201, subtask, "Subtask created successfully"),
@@ -122,11 +122,11 @@ const updateSubtask = asyncHandler(async (req, res) => {
     const params = req.params as UpdateSubtaskSchemaType["params"];
     const body = req.body as UpdateSubtaskSchemaType["body"];
 
-    const subtask = await updateSubtaskService({
-        subtaskId: params.subtaskId,
-        title: body.title,
-        isCompleted: body.isCompleted,
-    });
+    const subtask = await updateSubtaskService(
+        params.subtaskId,
+        body.title,
+        body.isCompleted,
+    );
 
     res.status(200).json(
         new ApiResponse(200, subtask, "Subtask updated successfully"),
@@ -149,11 +149,11 @@ const assignAttachment = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Attachment file is required");
     }
 
-    const attachment = await addSingleAttachmentToTaskService({
-        projectId: params.projectId,
-        taskId: params.taskId,
-        file: req.file,
-    });
+    const attachment = await addSingleAttachmentToTaskService(
+        params.taskId,
+        params.projectId,
+        req.file,
+    );
 
     res.status(200).json(
         new ApiResponse(200, attachment, "Attachment uploaded successfully"),
@@ -164,12 +164,13 @@ const updateSubtaskStatus = asyncHandler(async (req, res) => {
     const params = req.params as UpdateSubtaskStatusSchemaType["params"];
     const body = req.body as UpdateSubtaskStatusSchemaType["body"];
 
-    const result = await updateSubtaskStatusService({
-        subtaskId: params.subtaskId,
-        isCompleted: body.isCompleted,
-        userId: req.user._id,
-        userRole: req.user.role,
-    });
+    const result = await updateSubtaskStatusService(
+        params.taskId,
+        params.subtaskId,
+        body.isCompleted,
+        req.user._id,
+        req.user.role,
+    );
 
     res.status(200).json(
         new ApiResponse(200, result, "Subtask status updated successfully"),
@@ -184,10 +185,7 @@ const deleteAttachment = asyncHandler(async (req, res) => {
         throw new ApiError(400, "File ID is required");
     }
 
-    await deleteAttachmentFromTaskService({
-        taskId: params.taskId,
-        fileId: body.fileId,
-    });
+    await deleteAttachmentFromTaskService(params.taskId, body.fileId);
 
     res.status(200).json(
         new ApiResponse(

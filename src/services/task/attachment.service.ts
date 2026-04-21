@@ -8,6 +8,7 @@ import {
 import { toObjectId } from "../shared/index.js";
 import { mapTaskAttachment } from "./task-mapper.service.js";
 
+// Internal helper — not exported.
 const uploadTaskAttachmentsService = async (input: {
     projectId: string;
     taskId: string;
@@ -19,20 +20,16 @@ const uploadTaskAttachmentsService = async (input: {
         return [];
     }
 
-    const attachmentPromises = files.map((file) =>
-        uploadToImageKit(file, projectId, taskId),
+    return Promise.all(
+        files.map((file) => uploadToImageKit(file, projectId, taskId)),
     );
-
-    return Promise.all(attachmentPromises);
 };
 
-const addSingleAttachmentToTaskService = async (input: {
-    projectId: string;
-    taskId: string;
-    file: Express.Multer.File;
-}) => {
-    const { projectId, taskId, file } = input;
-
+const addSingleAttachmentToTaskService = async (
+    taskId: string,
+    projectId: string,
+    file: Express.Multer.File,
+) => {
     const task = await Tasks.findById(toObjectId(taskId));
 
     if (!task) {
@@ -50,7 +47,7 @@ const addSingleAttachmentToTaskService = async (input: {
         url: attachmentData.url,
         filePath: attachmentData.filePath || "",
         thumbnail: attachmentData.thumbnail || "",
-     });
+    });
 
     await task.save();
 
@@ -61,12 +58,10 @@ const addSingleAttachmentToTaskService = async (input: {
     };
 };
 
-const deleteAttachmentFromTaskService = async (input: {
-    taskId: string;
-    fileId: string;
-}) => {
-    const { taskId, fileId } = input;
-
+const deleteAttachmentFromTaskService = async (
+    taskId: string,
+    fileId: string,
+) => {
     const task = await Tasks.findById(toObjectId(taskId));
 
     if (!task) {
@@ -93,7 +88,7 @@ const getTaskAttachmentFileIdsService = async (taskIds: string[]) => {
     }
 
     const tasks = await Tasks.find({
-        _id: { $in: taskIds.map((taskId) => toObjectId(taskId)) },
+        _id: { $in: taskIds.map(toObjectId) },
     });
 
     return tasks.flatMap((task) =>

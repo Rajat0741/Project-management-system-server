@@ -5,19 +5,11 @@ import { TasksStatusEnum, UserRolesEnum } from "../../utils/constants.js";
 import { toObjectId } from "../shared/index.js";
 import type { Types } from "mongoose";
 
-const createSubtaskService = async (input: {
-    taskId: string;
-    title: string;
-    userId: Types.ObjectId;
-}) => {
-    const { taskId, title, userId } = input;
-
-    const task = await Tasks.findById(toObjectId(taskId));
-
-    if (!task) {
-        throw new ApiError(404, "Task not found");
-    }
-
+const createSubtaskService = async (
+    taskId: string,
+    title: string,
+    userId: Types.ObjectId,
+) => {
     return Subtask.create({
         title,
         task: toObjectId(taskId),
@@ -26,13 +18,11 @@ const createSubtaskService = async (input: {
     });
 };
 
-const updateSubtaskService = async (input: {
-    subtaskId: string;
-    title?: string;
-    isCompleted?: boolean;
-}) => {
-    const { subtaskId, title, isCompleted } = input;
-
+const updateSubtaskService = async (
+    subtaskId: string,
+    title?: string,
+    isCompleted?: boolean,
+) => {
     const subtask = await Subtask.findById(toObjectId(subtaskId));
 
     if (!subtask) {
@@ -46,7 +36,6 @@ const updateSubtaskService = async (input: {
     }
 
     await subtask.save();
-
     return subtask;
 };
 
@@ -64,39 +53,30 @@ const deleteSubtaskService = async (subtaskId: string) => {
 
 const getTaskStatusBySubtasksService = async (taskId: Types.ObjectId) => {
     const allSubtasks = await Subtask.find({ task: taskId });
-    const completedCount = allSubtasks.filter(
-        (subtask) => subtask.isCompleted,
-    ).length;
+    const completedCount = allSubtasks.filter((s) => s.isCompleted).length;
 
-    if (completedCount === 0) {
-        return TasksStatusEnum.TODO;
-    }
-
-    if (completedCount === allSubtasks.length) {
-        return TasksStatusEnum.DONE;
-    }
-
+    if (completedCount === 0) return TasksStatusEnum.TODO;
+    if (completedCount === allSubtasks.length) return TasksStatusEnum.DONE;
     return TasksStatusEnum.IN_PROGRESS;
 };
 
-const updateSubtaskStatusService = async (input: {
-    subtaskId: string;
-    isCompleted: boolean;
-    userId: Types.ObjectId;
-    userRole?: string;
-}) => {
-    const { subtaskId, isCompleted, userId, userRole } = input;
+const updateSubtaskStatusService = async (
+    taskId: string,
+    subtaskId: string,
+    isCompleted: boolean,
+    userId: Types.ObjectId,
+    userRole?: string,
+) => {
+    const task = await Tasks.findById(toObjectId(taskId));
+
+    if (!task) {
+        throw new ApiError(404, "Task not found");
+    }
 
     const subtask = await Subtask.findById(toObjectId(subtaskId));
 
     if (!subtask) {
         throw new ApiError(404, "Subtask not found");
-    }
-
-    const task = await Tasks.findById(subtask.task);
-
-    if (!task) {
-        throw new ApiError(404, "Parent task not found");
     }
 
     const isAssigned = task.assignedTo?.toString() === userId.toString();
@@ -124,18 +104,11 @@ const deleteSubtasksByTaskIdsService = async (taskIds: Types.ObjectId[]) => {
     if (!taskIds.length) {
         return;
     }
-
-    await Subtask.deleteMany({
-        task: {
-            $in: taskIds,
-        },
-    });
+    await Subtask.deleteMany({ task: { $in: taskIds } });
 };
 
 const deleteSubtasksByTaskIdService = async (taskId: string) => {
-    await Subtask.deleteMany({
-        task: toObjectId(taskId),
-    });
+    await Subtask.deleteMany({ task: toObjectId(taskId) });
 };
 
 export {

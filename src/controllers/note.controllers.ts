@@ -37,11 +37,11 @@ const createNote = asyncHandler(async (req, res) => {
     const params = req.params as CreateNoteSchemaType["params"];
     const body = req.body as CreateNoteSchemaType["body"];
 
-    const note = await createNoteService({
-        projectId: params.projectId,
-        content: body.content,
-        userId: req.user._id,
-    });
+    const note = await createNoteService(
+        params.projectId,
+        body.content,
+        req.user._id,
+    );
 
     res.status(201).json(
         new ApiResponse(201, note, "Note created successfully"),
@@ -52,11 +52,11 @@ const updateNote = asyncHandler(async (req, res) => {
     const params = req.params as UpdateNoteSchemaType["params"];
     const body = req.body as UpdateNoteSchemaType["body"];
 
-    const note = await updateNoteService({
-        noteId: params.noteId,
-        content: body.content,
-        userId: req.user._id,
-    });
+    const note = await updateNoteService(
+        params.noteId,
+        body.content,
+        req.user._id,
+    );
 
     res.status(200).json(
         new ApiResponse(200, note, "Note updated successfully"),

@@ -3,6 +3,7 @@ import {
     verifyJWT,
     validateProjectPermission,
 } from "../middlewares/auth.middleware.js";
+import { validateNoteOwnership } from "../middlewares/resource-guard.middleware.js";
 import validate from "../middlewares/validator.middleware.js";
 import { AvailableUserRole, UserRolesEnum } from "../utils/constants.js";
 import {
@@ -43,16 +44,19 @@ router
     .get(
         validate(getNoteByIdSchema),
         validateProjectPermission(AvailableUserRole),
+        validateNoteOwnership,
         getNoteById,
     )
     .put(
         validate(updateNoteSchema),
         validateProjectPermission([UserRolesEnum.ADMIN]),
+        validateNoteOwnership,
         updateNote,
     )
     .delete(
         validate(deleteNoteSchema),
         validateProjectPermission([UserRolesEnum.ADMIN]),
+        validateNoteOwnership,
         deleteNote,
     );
 

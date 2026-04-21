@@ -3,7 +3,7 @@ import { Tasks } from "../../models/task.models.js";
 import { ProjectMember } from "../../models/projectmember.models.js";
 import { Subtask } from "../../models/subtask.models.js";
 import ApiError from "../../utils/api-errors.js";
-import { ensureProjectExists, toObjectId } from "../shared/index.js";
+import { toObjectId } from "../shared/index.js";
 import {
     deleteTaskAttachmentsByTaskIdsService,
     uploadTaskAttachmentsService,
@@ -24,6 +24,7 @@ const ensureAssignedMemberService = async (
     }
 };
 
+// createTaskService keeps the input object — 9 parameters warrants named args.
 const createTaskService = async (input: {
     projectId: string;
     title: string;
@@ -45,7 +46,6 @@ const createTaskService = async (input: {
         files,
     } = input;
 
-    await ensureProjectExists(projectId);
     await ensureAssignedMemberService(projectId, assignedTo);
 
     const task = await Tasks.create({
@@ -85,15 +85,13 @@ const createTaskService = async (input: {
     return { task, createdSubtasks };
 };
 
-const updateTaskService = async (input: {
-    taskId: string;
-    title?: string;
-    description?: string;
-    assignedTo?: string;
-    status?: string;
-}) => {
-    const { taskId, title, description, assignedTo, status } = input;
-
+const updateTaskService = async (
+    taskId: string,
+    title?: string,
+    description?: string,
+    assignedTo?: string,
+    status?: string,
+) => {
     const task = await Tasks.findById(toObjectId(taskId));
 
     if (!task) {

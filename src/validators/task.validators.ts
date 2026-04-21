@@ -30,37 +30,10 @@ export const createTaskSchema = z.object({
             .regex(mongoIdRegex, "Invalid Project Member ID"),
         status: statusSchema.optional(),
         subtasks: z
-            .string()
-            .transform((str, ctx) => {
-                try {
-                    return JSON.parse(str);
-                } catch (e) {
-                    ctx.addIssue({
-                        code: "custom",
-                        message: "Invalid JSON string",
-                    });
-                    return z.NEVER;
-                }
-            })
-            .pipe(
-                z.array(
-                    z.object({
-                        title: z
-                            .string()
-                            .trim()
-                            .min(1, "Subtask title is required"),
-                    }),
-                ),
-            )
-            .or(
-                z.array(
-                    z.object({
-                        title: z
-                            .string()
-                            .trim()
-                            .min(1, "Subtask title is required"),
-                    }),
-                ),
+            .array(
+                z.object({
+                    title: z.string().trim().min(1, "Subtask title is required"),
+                }),
             )
             .optional(),
     }),

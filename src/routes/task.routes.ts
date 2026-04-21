@@ -47,6 +47,18 @@ router
     )
     .post(
         uploadAttachment.array("attachments"),
+        (req, _res, next) => {
+            // Multer parses multipart fields as flat strings.
+            // Pre-parse subtasks so the Zod schema always receives an array.
+            if (typeof req.body.subtasks === "string") {
+                try {
+                    req.body.subtasks = JSON.parse(req.body.subtasks);
+                } catch {
+                    req.body.subtasks = undefined;
+                }
+            }
+            next();
+        },
         validate(createTaskSchema),
         validateProjectPermission([
             UserRolesEnum.ADMIN,

@@ -36,10 +36,6 @@ Below is a comprehensive list of all features combining both the client-side UI 
 - **Cloud Storage Integration:** Reliable, optimized file storing and serving using ImageKit.
 - **Versatile Downloads:** Download individual file attachments directly or perform bulk downloads by asynchronously packaging all task attachments into a ZIP file entirely on the client-side.
 
-## 📝 Collaborative Notes
-- **Project Notes:** Dedicated sub-system for collaborative note-taking directly partitioned within a project.
-- **Note Management:** Create, view, update, and delete shared notes across project members.
-
 ## 🎨 UI/UX & Frontend Experiences
 - **Responsive Layouts:** Fully responsive layout optimized perfectly for mobile, tablet, and desktop viewing.
 - **Theming & Aesthetics:** Persistent Dark and Light mode toggles out-of-the-box.

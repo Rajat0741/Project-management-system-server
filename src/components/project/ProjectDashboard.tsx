@@ -1,8 +1,10 @@
 import { useState, useMemo } from "react";
-import { ProjectCard } from "./ProjectCard";
+import { ProjectRow } from "./ProjectCard";
 import { Button } from "@/components/ui/button";
 import type { ProjectListItem } from "@/types";
-import { FolderOpen, Search, X, SlidersHorizontal, Plus } from "lucide-react";
+import { FolderOpen, Search, X, SlidersHorizontal, Plus, ShieldCheck, User as UserIcon } from "lucide-react";
+import { useUserStore } from "@/store/userData";
+import { motion } from "motion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -36,6 +38,8 @@ export function ProjectDashboard({ projects = [] }: ProjectDashboardProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterRole, setFilterRole] = useState<FilterRole>("all");
   const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
+
+  const { userData } = useUserStore();
 
   const filteredProjects = useMemo(() => {
     let result = [...projects];
@@ -72,24 +76,46 @@ export function ProjectDashboard({ projects = [] }: ProjectDashboardProps) {
 
   const activeFilterCount = (filterRole !== "all" ? 1 : 0) + (sortOrder !== "newest" ? 1 : 0);
 
-  // Use dataToUse for counts and length
   const totalProjects = projects.length;
+  const adminCount = projects.filter((p) => p.role === "admin").length;
+  const memberCount = projects.filter((p) => p.role === "member").length;
+  const firstName = userData?.fullName?.split(" ")[0] || "there";
 
   return (
     <main className="mx-auto max-w-400 px-4 sm:px-6 lg:px-8 py-8">
       {/* Page Header */}
       <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
-              <FolderOpen className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+        <h1 className="text-2xl font-bold text-foreground">
+          Welcome back, {firstName}
+        </h1>
+        <p className="meta-text mt-1">
+          You have {totalProjects} project{totalProjects !== 1 ? "s" : ""}
+        </p>
+      </div>
+
+      {/* Stats Banner */}
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        {[
+          { label: "Total Projects", value: totalProjects, icon: FolderOpen },
+          { label: "Admin", value: adminCount, icon: ShieldCheck },
+          { label: "Member", value: memberCount, icon: UserIcon },
+        ].map((stat, i) => (
+          <motion.div
+            key={stat.label}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: i * 0.1 }}
+            className="flex items-center gap-3 rounded-xl border bg-card px-4 py-3"
+          >
+            <div className="flex size-9 items-center justify-center rounded-lg bg-muted">
+              <stat.icon className="size-4 text-muted-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Projects</h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Manage and collaborate on your projects</p>
+              <p className="stat-value text-lg">{stat.value}</p>
+              <p className="meta-text">{stat.label}</p>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        ))}
       </div>
 
       {/* Filters & Controls */}
@@ -114,15 +140,15 @@ export function ProjectDashboard({ projects = [] }: ProjectDashboardProps) {
         </div>
       </div>
 
-      {/* Projects Grid/List */}
+      {/* Projects List */}
       {filteredProjects.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredProjects.map((item) => (
-            <ProjectCard key={item.projects._id} item={item} />
+        <div className="rounded-xl border divide-y">
+          {filteredProjects.map((item, index) => (
+            <ProjectRow key={item.projects._id} item={item} index={index} />
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center bg-white dark:bg-transparent outline rounded-2xl">
+        <div className="flex flex-col items-center justify-center py-16 text-center rounded-xl border bg-muted">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 mb-4">
             <FolderOpen className="h-8 w-8 text-slate-400" />
           </div>

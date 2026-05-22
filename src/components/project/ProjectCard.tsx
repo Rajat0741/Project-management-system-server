@@ -1,51 +1,56 @@
 import type { ProjectListItem } from "@/types";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Users, Calendar } from "lucide-react";
+import { Users, Calendar, ChevronRight } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import { motion } from "motion/react";
 
-interface ProjectCardProps {
+interface ProjectRowProps {
   item: ProjectListItem;
+  index: number;
 }
 
-export function ProjectCard({ item }: ProjectCardProps) {
+export function ProjectRow({ item, index }: ProjectRowProps) {
   const { projects: project, role } = item;
   const navigate = useNavigate();
-  const params = item.projects._id;
+
+  const formattedDate = new Date(project.createdAt).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 
   return (
-    <Card
-      className="group hover:shadow-md hover:border-slate-300 cursor-pointer hover:bg-muted dark:hover:bg-neutral-800"
-      onClick={() => navigate({to:`/project/${params}`}) }
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+      className="group flex items-center gap-4 px-4 py-3 cursor-pointer transition-colors rounded-xl hover:bg-muted/80"
+      onClick={() => navigate({ to: `/project/${project._id}` })}
     >
-      <CardContent className="p-4 flex flex-col gap-4">
-        {/* Header: Name and Role */}
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100 truncate flex-1" title={project.name}>
-            {project.name}
-          </h3>
-          <Badge variant="secondary" className="shrink-0 text-xs font-normal">
-            {role.toLowerCase()}
-          </Badge>
-        </div>
+      {/* Project info */}
+      <div className="flex-1 min-w-0">
+        <p className="font-medium text-sm text-foreground truncate">{project.name}</p>
+        {project.description && (
+          <p className="meta-text truncate mt-0.5">{project.description}</p>
+        )}
+      </div>
 
-        {/* Description */}
-        <p className="text-sm text-slate-500 line-clamp-2 min-h-10">
-          {project.description || "No description provided."}
-        </p>
+      {/* Metadata */}
+      <div className="hidden sm:flex items-center gap-3 shrink-0">
+        <span className="meta-text capitalize">{role}</span>
+        <span className="meta-text">·</span>
+        <span className="meta-text flex items-center gap-1">
+          <Users className="size-3" />
+          {project.members}
+        </span>
+        <span className="meta-text">·</span>
+        <span className="meta-text flex items-center gap-1">
+          <Calendar className="size-3" />
+          {formattedDate}
+        </span>
+      </div>
 
-        {/* Footer: Meta Info */}
-        <div className="flex items-center gap-4 text-xs text-slate-400 mt-auto">
-          <div className="flex items-center gap-1.5">
-            <Users className="h-3.5 w-3.5" />
-            <span>{project.members}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5" />
-            <span>{new Date(project.createdAt).toLocaleDateString()}</span>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+      {/* Chevron */}
+      <ChevronRight className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 hidden sm:block" />
+    </motion.div>
   );
 }

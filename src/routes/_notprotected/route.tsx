@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { DotBackground } from "@/components/ui/DotBackground";
 
 export const Route = createFileRoute("/_notprotected")({
   component: RouteComponent,
@@ -13,8 +14,10 @@ export const Route = createFileRoute("/_notprotected")({
 
 function RouteComponent() {
   return (
+      <DotBackground>
     <div className="flex flex-col w-full h-full items-center justify-center min-h-screen">
-      <Outlet />
+        <Outlet />
     </div>
+      </DotBackground>
   );
 }

@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/sonner";
 import type { AuthState } from "@/types";
 import type { QueryClient } from "@tanstack/react-query";
 import Header from "@/components/shared/Header";
-import { DotBackground } from "@/components/ui/DotBackground";
 import ErrorPage from "@/components/shared/ErrorPage";
 import NotFoundPage from "@/components/shared/NotFoundPage";
 import { ColdStartLoader } from "@/components/shared/ColdStartLoader";
@@ -23,7 +22,7 @@ const RootShell = ({ children }: { children: React.ReactNode }) => {
       <ThemeProvider attribute="class">
         <div className="min-h-screen flex flex-col">
           <Header />
-          <DotBackground className="flex-1">{children}</DotBackground>
+          <div className="flex-1">{children}</div>
           <Toaster />
         </div>
       </ThemeProvider>
@@ -46,11 +45,9 @@ const RootLayout = () => {
               <Outlet />
             </div>
           ) : (
-            <DotBackground className="flex-1">
               <ColdStartLoader>
                 <Outlet />
               </ColdStartLoader>
-            </DotBackground>
           )}
           <Toaster />
         </div>

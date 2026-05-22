@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "motion/react";
 import {
   ChevronDown,
   ChevronRight,
@@ -23,9 +24,8 @@ import {
 import { TaskStatusLabels } from "@/schemas/task.schema";
 import { CreateTaskButton } from "./CreateTaskButton";
 import { EditTaskButton } from "./EditTaskDialog";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DownloadAttachmentsButton } from "./DownloadAttachmentsButton";
-import type { Task, SubTask, ProjectMemberWithDetails } from "@/types";
+import type { Task, TaskStatus, SubTask, ProjectMemberWithDetails } from "@/types";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +42,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Item, ItemContent, ItemTitle, ItemDescription, ItemActions, ItemGroup, ItemMedia } from "@/components/ui/item";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Item, ItemContent, ItemTitle, ItemActions, ItemGroup, ItemMedia } from "@/components/ui/item";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 
@@ -54,6 +55,26 @@ interface ProjectTasksProps {
 
 export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps) {
   const { data: tasks, isLoading, isError } = useQuery(tasksQueryOptions(projectId));
+  const [statusFilter, setStatusFilter] = useState<TaskStatus | "all">("all");
+
+  const filteredTasks = useMemo(() => {
+    if (!tasks) return [];
+    if (statusFilter === "all") return tasks;
+    return tasks.filter((t) => t.status === statusFilter);
+  }, [tasks, statusFilter]);
+
+  const statusCounts = useMemo(() => {
+    if (!tasks) return { all: 0, todo: 0, in_progress: 0, done: 0 };
+    return {
+      all: tasks.length,
+      todo: tasks.filter((t) => t.status === "todo").length,
+      in_progress: tasks.filter((t) => t.status === "in_progress").length,
+      done: tasks.filter((t) => t.status === "done").length,
+    };
+  }, [tasks]);
+
+  const completedCount = statusCounts.done;
+  const totalCount = statusCounts.all;
 
   if (isLoading) {
     return (
@@ -65,40 +86,104 @@ export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps)
 
   if (isError) {
     return (
-      <div className="p-12 text-center border rounded-lg border-dashed">
+      <div className="py-12 text-center rounded-xl border border-dashed">
         <p className="text-muted-foreground text-lg">Error loading tasks. Please try again.</p>
       </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-6">
+    <div className="space-y-4">
+      {/* Header toolbar */}
+      <div className="flex items-center justify-between">
         <div>
-          <CardTitle className="text-xl font-semibold">Tasks</CardTitle>
-          <CardDescription className="text-sm text-muted-foreground mt-1">
-            {tasks?.length || 0} task{tasks?.length !== 1 ? "s" : ""} in this project
-          </CardDescription>
+          <h2 className="text-lg font-semibold text-foreground">Tasks</h2>
+          <p className="meta-text mt-0.5">
+            {completedCount} of {totalCount} completed
+          </p>
         </div>
         {isAdmin && <CreateTaskButton projectId={projectId} members={members} />}
-      </CardHeader>
+      </div>
 
-      <CardContent>
-        {/* Task List */}
-        {!tasks || tasks.length === 0 ? (
-          <div className="p-12 text-center border rounded-lg border-dashed">
-            <p className="text-muted-foreground text-lg">No tasks yet</p>
-            <p className="text-sm text-muted-foreground mt-1">Create your first task to get started</p>
-          </div>
-        ) : (
-          <ItemGroup>
-            {tasks.map((task) => (
-              <TaskItem key={task._id} task={task} projectId={projectId} members={members} isAdmin={isAdmin} />
+      {/* Progress bar */}
+      {totalCount > 0 && (
+        <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+          <motion.div
+            className="h-full rounded-full bg-foreground/70"
+            initial={{ width: 0 }}
+            animate={{ width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%` }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          />
+        </div>
+      )}
+
+      {/* Status filter tabs */}
+      <div className="flex items-center gap-1 border-b">
+        {(["all", "todo", "in_progress", "done"] as const).map((status) => {
+          const labels: Record<string, string> = {
+            all: "All",
+            todo: "Not Started",
+            in_progress: "In Progress",
+            done: "Done",
+          };
+          const isActive = statusFilter === status;
+          return (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={cn(
+                "relative px-3 py-2 text-sm font-medium transition-colors",
+                isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {labels[status]}
+              <span
+                className={cn(
+                  "ml-1.5 text-xs tabular-nums",
+                  isActive ? "text-foreground/70" : "text-muted-foreground",
+                )}
+              >
+                {statusCounts[status]}
+              </span>
+              {isActive && (
+                <motion.div
+                  layoutId="task-filter-underline"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-foreground"
+                  transition={{ duration: 0.2 }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Task list */}
+      {filteredTasks.length === 0 ? (
+        <div className="py-12 text-center rounded-xl border border-dashed">
+          <p className="text-muted-foreground">
+            {statusFilter !== "all"
+              ? `No tasks with status "${TaskStatusLabels[statusFilter as TaskStatus] || statusFilter}"`
+              : "No tasks yet"}
+          </p>
+          <p className="meta-text mt-1">Create your first task to get started</p>
+        </div>
+      ) : (
+        <div className="rounded-xl border divide-y">
+          <AnimatePresence initial={true}>
+            {filteredTasks.map((task, index) => (
+              <TaskItem
+                key={task._id}
+                task={task}
+                projectId={projectId}
+                members={members}
+                isAdmin={isAdmin}
+                index={index}
+              />
             ))}
-          </ItemGroup>
-        )}
-      </CardContent>
-    </Card>
+          </AnimatePresence>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -114,12 +199,15 @@ interface TaskItemProps {
   projectId: string;
   members: ProjectMemberWithDetails[];
   isAdmin: boolean;
+  index: number;
 }
 
-function TaskItem({ task, projectId, isAdmin }: TaskItemProps) {
+function TaskItem({ task, projectId, members, isAdmin, index }: TaskItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const deleteTask = useDeleteTask(projectId);
+
+  const assignee = members.find((m) => m.user._id === task.assignedTo);
 
   // Lazy load task details (including subtasks) when expanded
   const { data: taskDetails, isLoading: isLoadingDetails } = useQuery({
@@ -138,38 +226,58 @@ function TaskItem({ task, projectId, isAdmin }: TaskItemProps) {
   return (
     <>
       <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-        <Item 
-          variant="outline" 
-          className="flex-col items-stretch transition-colors bg-accent/40 shadow-sm">
-          {/* Task Header Row */}
-          <div className="flex items-center gap-3 w-full">
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, delay: index * 0.04 }}
+          className="group/task"
+        >
+          {/* Collapsed row */}
+          <div className="flex items-start sm:items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/40">
+            {/* Expand toggle */}
             <CollapsibleTrigger
               render={
-                <Button variant="ghost" size="icon-xs" className="shrink-0 bg-primary/10 hover:bg-primary/20">
-                  {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                <Button variant="ghost" size="icon-xs" className="shrink-0 mt-0.5 sm:mt-0">
+                  {isExpanded ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
                 </Button>
               }
             />
 
-            <ItemContent className="min-w-0 flex-1">
-              <ItemTitle>{task.title}</ItemTitle>
-              {task.description && <ItemDescription className="line-clamp-1">{task.description}</ItemDescription>}
-            </ItemContent>
+            {/* Title + description */}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">{task.title}</p>
+              {task.description && <p className="meta-text truncate mt-0.5">{task.description}</p>}
+            </div>
 
-            <ItemActions>
+            {/* Metadata row */}
+            <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+              {/* Assignee avatar */}
+              {assignee && (
+                <div className="flex items-center gap-1.5" title={assignee.user.fullName}>
+                  <Avatar className="size-5">
+                    <AvatarImage src={assignee.user.avatar.url} alt={assignee.user.fullName} />
+                    <AvatarFallback className="text-[10px]">{assignee.user.fullName.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <span className="meta-text hidden lg:inline">{assignee.user.fullName.split(" ")[0]}</span>
+                </div>
+              )}
+
+              {/* Attachment count */}
               {task.attachments && task.attachments.length > 0 && (
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Paperclip className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-1 meta-text">
+                  <Paperclip className="size-3" />
                   <span>{task.attachments.length}</span>
                 </div>
               )}
 
-              <Badge variant={statusVariants[task.status] || "outline"}>
+              {/* Status badge */}
+              <Badge variant={statusVariants[task.status] || "outline"} className="text-xs">
                 {TaskStatusLabels[task.status] || task.status}
               </Badge>
 
+              {/* Admin actions */}
               {isAdmin && (
-                <>
+                <div className="flex items-center gap-0.5">
                   <EditTaskButton task={fullTask} projectId={projectId} />
                   <Button
                     variant="ghost"
@@ -180,16 +288,16 @@ function TaskItem({ task, projectId, isAdmin }: TaskItemProps) {
                       setShowDeleteDialog(true);
                     }}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="size-4" />
                   </Button>
-                </>
+                </div>
               )}
-            </ItemActions>
+            </div>
           </div>
 
-          {/* Expanded Content */}
+          {/* Expanded content */}
           <CollapsibleContent>
-            <div className="pt-4 mt-2 border-t border-muted-foreground/10 space-y-6">
+            <div className="px-4 pb-4 pt-1 ml-9 border-t border-dashed space-y-4">
               {isLoadingDetails ? (
                 <div className="flex justify-center py-4">
                   <Spinner />
@@ -199,7 +307,7 @@ function TaskItem({ task, projectId, isAdmin }: TaskItemProps) {
               )}
             </div>
           </CollapsibleContent>
-        </Item>
+        </motion.div>
       </Collapsible>
 
       {/* Delete Dialog */}
@@ -291,7 +399,7 @@ function TaskDetails({ projectId, task, isAdmin }: TaskDetailsProps) {
       {/* Subtasks */}
       {hasSubtasks && (
         <div>
-          <p className="text-xs font-semibold tracking-wide uppercase text-muted-foreground mb-3">
+          <p className="section-header mb-3">
             Subtasks ({task.subtasks?.filter((s) => s.isCompleted).length}/{task.subtasks?.length})
           </p>
           <ItemGroup className="gap-2">
@@ -302,7 +410,7 @@ function TaskDetails({ projectId, task, isAdmin }: TaskDetailsProps) {
                 variant="outline"
                 className={cn(
                   "items-center bg-background/80 shadow-sm border-muted-foreground/20",
-                  subtask.isCompleted && "opacity-50"
+                  subtask.isCompleted && "opacity-50",
                 )}
               >
                 <ItemMedia
@@ -371,18 +479,20 @@ function TaskDetails({ projectId, task, isAdmin }: TaskDetailsProps) {
       {hasAttachments && (
         <div className="pt-2">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">Attachments ({task.attachments.length})</p>
+            <p className="section-header">Attachments ({task.attachments.length})</p>
             <DownloadAttachmentsButton attachments={task.attachments} fileName={`${task.title}-attachments`} />
           </div>
           <ItemGroup className="gap-2">
             {task.attachments.map((att, i) => (
-              <Item 
-                key={i} 
-                size="xs" 
-                variant="outline" 
+              <Item
+                key={i}
+                size="xs"
+                variant="outline"
                 className="items-center bg-background/80 shadow-sm border-muted-foreground/20 hover:bg-background transition-colors"
               >
-                <ItemMedia variant="icon" className="self-center! translate-y-0!">{getFileIcon(att.url)}</ItemMedia>
+                <ItemMedia variant="icon" className="self-center! translate-y-0!">
+                  {getFileIcon(att.url)}
+                </ItemMedia>
                 <ItemContent>
                   <ItemTitle>{getFilename(att.url)}</ItemTitle>
                 </ItemContent>

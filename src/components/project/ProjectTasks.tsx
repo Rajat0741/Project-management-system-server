@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -10,7 +10,6 @@ import {
   Download,
   FileImage,
   FileText,
-  Paperclip,
   Pencil,
 } from "lucide-react";
 import {
@@ -57,21 +56,14 @@ export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps)
   const { data: tasks, isLoading, isError } = useQuery(tasksQueryOptions(projectId));
   const [statusFilter, setStatusFilter] = useState<TaskStatus | "all">("all");
 
-  const filteredTasks = useMemo(() => {
-    if (!tasks) return [];
-    if (statusFilter === "all") return tasks;
-    return tasks.filter((t) => t.status === statusFilter);
-  }, [tasks, statusFilter]);
-
-  const statusCounts = useMemo(() => {
-    if (!tasks) return { all: 0, todo: 0, in_progress: 0, done: 0 };
-    return {
-      all: tasks.length,
-      todo: tasks.filter((t) => t.status === "todo").length,
-      in_progress: tasks.filter((t) => t.status === "in_progress").length,
-      done: tasks.filter((t) => t.status === "done").length,
-    };
-  }, [tasks]);
+  const allTasks = tasks ?? [];
+  const filteredTasks = statusFilter === "all" ? allTasks : allTasks.filter((task) => task.status === statusFilter);
+  const statusCounts = {
+    all: allTasks.length,
+    todo: allTasks.filter((task) => task.status === "todo").length,
+    in_progress: allTasks.filter((task) => task.status === "in_progress").length,
+    done: allTasks.filter((task) => task.status === "done").length,
+  };
 
   const completedCount = statusCounts.done;
   const totalCount = statusCounts.all;
@@ -245,7 +237,14 @@ function TaskItem({ task, projectId, members, isAdmin, index }: TaskItemProps) {
 
             {/* Title + description */}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">{task.title}</p>
+              <p
+                className={cn(
+                  "text-sm font-medium text-foreground",
+                  isExpanded ? "wrap-break-word" : "truncate",
+                )}
+              >
+                {task.title}
+              </p>
               {task.description && <p className="meta-text truncate mt-0.5">{task.description}</p>}
             </div>
 
@@ -259,14 +258,6 @@ function TaskItem({ task, projectId, members, isAdmin, index }: TaskItemProps) {
                     <AvatarFallback className="text-[10px]">{assignee.user.fullName.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <span className="meta-text hidden lg:inline">{assignee.user.fullName.split(" ")[0]}</span>
-                </div>
-              )}
-
-              {/* Attachment count */}
-              {task.attachments && task.attachments.length > 0 && (
-                <div className="flex items-center gap-1 meta-text">
-                  <Paperclip className="size-3" />
-                  <span>{task.attachments.length}</span>
                 </div>
               )}
 
@@ -297,7 +288,7 @@ function TaskItem({ task, projectId, members, isAdmin, index }: TaskItemProps) {
 
           {/* Expanded content */}
           <CollapsibleContent>
-            <div className="ml-9 space-y-4 border-t border-dashed border-slate-300 px-4 pb-4 pt-1 dark:border-foreground/20">
+            <div className="ml-2 space-y-4 border-t border-dashed border-slate-300 px-4 pb-4 pt-1 dark:border-foreground/20">
               {isLoadingDetails ? (
                 <div className="flex justify-center py-4">
                   <Spinner />
@@ -399,7 +390,7 @@ function TaskDetails({ projectId, task, isAdmin }: TaskDetailsProps) {
       {/* Subtasks */}
       {hasSubtasks && (
         <div>
-          <p className="section-header mb-3">
+          <p className="section-header my-2">
             Subtasks ({task.subtasks?.filter((s) => s.isCompleted).length}/{task.subtasks?.length})
           </p>
           <ItemGroup className="gap-2">
@@ -473,7 +464,7 @@ function TaskDetails({ projectId, task, isAdmin }: TaskDetailsProps) {
         </div>
       )}
 
-      {hasAttachments && hasSubtasks && <Separator className="bg-muted-foreground/15 my-6" />}
+      {hasAttachments && hasSubtasks && <Separator className="bg-muted-foreground/15 my-2" />}
 
       {/* Attachments */}
       {hasAttachments && (
@@ -493,8 +484,10 @@ function TaskDetails({ projectId, task, isAdmin }: TaskDetailsProps) {
                 <ItemMedia variant="icon" className="self-center! translate-y-0!">
                   {getFileIcon(att.url)}
                 </ItemMedia>
-                <ItemContent>
-                  <ItemTitle>{getFilename(att.url)}</ItemTitle>
+                <ItemContent className="min-w-0">
+                  <ItemTitle className="block max-w-full truncate" title={getFilename(att.url)}>
+                    {getFilename(att.url)}
+                  </ItemTitle>
                 </ItemContent>
                 <ItemActions>
                   <a

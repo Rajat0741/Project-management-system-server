@@ -86,14 +86,14 @@ export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps)
 
   if (isError) {
     return (
-      <div className="py-12 text-center rounded-xl border border-dashed">
+      <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/60 py-12 text-center dark:border-foreground/20 dark:bg-transparent">
         <p className="text-muted-foreground text-lg">Error loading tasks. Please try again.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-foreground/15 dark:bg-card dark:shadow-none">
       {/* Header toolbar */}
       <div className="flex items-center justify-between">
         <div>
@@ -118,7 +118,7 @@ export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps)
       )}
 
       {/* Status filter tabs */}
-      <div className="flex items-center gap-1 border-b">
+      <div className="flex items-center gap-1 border-b border-slate-200 dark:border-foreground/10">
         {(["all", "todo", "in_progress", "done"] as const).map((status) => {
           const labels: Record<string, string> = {
             all: "All",
@@ -159,7 +159,7 @@ export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps)
 
       {/* Task list */}
       {filteredTasks.length === 0 ? (
-        <div className="py-12 text-center rounded-xl border border-dashed">
+        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/60 py-12 text-center dark:border-foreground/20 dark:bg-transparent">
           <p className="text-muted-foreground">
             {statusFilter !== "all"
               ? `No tasks with status "${TaskStatusLabels[statusFilter as TaskStatus] || statusFilter}"`
@@ -168,7 +168,7 @@ export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps)
           <p className="meta-text mt-1">Create your first task to get started</p>
         </div>
       ) : (
-        <div className="rounded-xl border divide-y">
+        <div className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white dark:divide-foreground/10 dark:border-foreground/15 dark:bg-transparent">
           <AnimatePresence initial={true}>
             {filteredTasks.map((task, index) => (
               <TaskItem
@@ -233,7 +233,7 @@ function TaskItem({ task, projectId, members, isAdmin, index }: TaskItemProps) {
           className="group/task"
         >
           {/* Collapsed row */}
-          <div className="flex items-start sm:items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/40">
+          <div className="flex items-start gap-3 px-4 py-3 transition-colors hover:bg-slate-50 sm:items-center dark:hover:bg-muted/40">
             {/* Expand toggle */}
             <CollapsibleTrigger
               render={
@@ -297,7 +297,7 @@ function TaskItem({ task, projectId, members, isAdmin, index }: TaskItemProps) {
 
           {/* Expanded content */}
           <CollapsibleContent>
-            <div className="px-4 pb-4 pt-1 ml-9 border-t border-dashed space-y-4">
+            <div className="ml-9 space-y-4 border-t border-dashed border-slate-300 px-4 pb-4 pt-1 dark:border-foreground/20">
               {isLoadingDetails ? (
                 <div className="flex justify-center py-4">
                   <Spinner />

@@ -26,7 +26,7 @@ export function ProjectDetails({ project, members, currentUserRole = "member" }:
         </div>
 
         <TabsContent value="project" className="space-y-6 animate-in fade-in-0 slide-in-from-left-2 duration-300">
-          <ProjectOverview project={project} isAdmin={isAdmin} />
+          <ProjectOverview project={project} members={members} isAdmin={isAdmin} />
         </TabsContent>
 
         <TabsContent value="members" className="pt-2 animate-in fade-in-0 slide-in-from-left-2 duration-300">

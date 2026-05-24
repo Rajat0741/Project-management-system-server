@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { ProjectRow } from "./ProjectCard";
+import { ProjectRow } from "./ProjectRow";
 import { Button } from "@/components/ui/button";
 import type { ProjectListItem } from "@/types";
 import { FolderOpen, Search, X, SlidersHorizontal, Plus, ShieldCheck, User as UserIcon } from "lucide-react";
@@ -105,9 +105,9 @@ export function ProjectDashboard({ projects = [] }: ProjectDashboardProps) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: i * 0.1 }}
-            className="flex items-center gap-3 rounded-xl border bg-card px-4 py-3"
+            className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-foreground/15 dark:bg-card dark:shadow-none"
           >
-            <div className="flex size-9 items-center justify-center rounded-lg bg-muted">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-slate-100 dark:bg-muted">
               <stat.icon className="size-4 text-muted-foreground" />
             </div>
             <div>
@@ -142,14 +142,14 @@ export function ProjectDashboard({ projects = [] }: ProjectDashboardProps) {
 
       {/* Projects List */}
       {filteredProjects.length > 0 ? (
-        <div className="rounded-xl border divide-y">
+        <div className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white shadow-sm dark:divide-foreground/10 dark:border-foreground/15 dark:bg-card dark:shadow-none">
           {filteredProjects.map((item, index) => (
             <ProjectRow key={item.projects._id} item={item} index={index} />
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center rounded-xl border bg-muted">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 mb-4">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50/60 py-16 text-center dark:border-foreground/20 dark:bg-muted">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm dark:bg-slate-800 dark:shadow-none">
             <FolderOpen className="h-8 w-8 text-slate-400" />
           </div>
           <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-1">No projects found</h3>

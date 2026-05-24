@@ -23,34 +23,29 @@ export function ProjectRow({ item, index }: ProjectRowProps) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
-      className="group flex items-center gap-4 px-4 py-3 cursor-pointer transition-colors rounded-xl hover:bg-muted/80"
+      className="group flex cursor-pointer items-center gap-4 rounded-xl px-4 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-muted/80"
       onClick={() => navigate({ to: `/project/${project._id}` })}
     >
-      {/* Project info */}
-      <div className="flex-1 min-w-0">
-        <p className="font-medium text-sm text-foreground truncate">{project.name}</p>
-        {project.description && (
-          <p className="meta-text truncate mt-0.5">{project.description}</p>
-        )}
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-medium text-foreground">{project.name}</p>
+        <p className="meta-text mt-0.5 truncate">{project.description || "No description provided"}</p>
       </div>
 
-      {/* Metadata */}
-      <div className="hidden sm:flex items-center gap-3 shrink-0">
+      <div className="hidden shrink-0 items-center gap-3 sm:flex">
         <span className="meta-text capitalize">{role}</span>
-        <span className="meta-text">·</span>
+        <span className="meta-text">-</span>
         <span className="meta-text flex items-center gap-1">
           <Users className="size-3" />
           {project.members}
         </span>
-        <span className="meta-text">·</span>
+        <span className="meta-text">-</span>
         <span className="meta-text flex items-center gap-1">
           <Calendar className="size-3" />
           {formattedDate}
         </span>
       </div>
 
-      {/* Chevron */}
-      <ChevronRight className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 hidden sm:block" />
+      <ChevronRight className="hidden size-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 sm:block" />
     </motion.div>
   );
 }

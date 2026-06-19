@@ -14,7 +14,7 @@ interface ProjectDetailsProps {
 export function ProjectDetails({ project, members, currentUserRole = "member" }: ProjectDetailsProps) {
   const isAdmin = currentUserRole === "admin";
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-full overflow-hidden">
       <Tabs defaultValue="project" className="w-full">
         <div className="flex items-center justify-between mb-4">
           <TabsList className="w-full max-w-125 dark:bg-neutral-900">

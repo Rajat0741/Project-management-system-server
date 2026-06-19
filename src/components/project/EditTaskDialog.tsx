@@ -124,7 +124,7 @@ export function EditTaskDialog({ task, projectId, isOpen, onClose }: EditTaskDia
             <div className="space-y-1">
               {task.attachments.map((att) => (
                 <div key={att.fileId} className="flex items-center justify-between p-2 bg-background rounded text-sm">
-                  <span className="truncate max-w-[200px]">
+                  <span className="truncate max-w-50">
                     {decodeURIComponent(new URL(att.url).pathname.split("/").pop() || "file")}
                   </span>
                   <Button

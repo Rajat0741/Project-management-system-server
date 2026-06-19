@@ -61,6 +61,9 @@ export function ProjectOverview({ project, members, isAdmin }: ProjectOverviewPr
     done: allTasks.filter((task) => task.status === "done").length,
   };
 
+  const ACTIVE_TASKS_LIMIT = 5;
+  const DONE_TASKS_LIMIT = 3;
+
   const activeTasks = allTasks
     .filter((task) => task.status === "in_progress" || task.status === "todo")
     .sort((a, b) => {
@@ -68,12 +71,12 @@ export function ProjectOverview({ project, members, isAdmin }: ProjectOverviewPr
       if (statusDiff !== 0) return statusDiff;
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
     })
-    .slice(0, 5);
+    .slice(0, ACTIVE_TASKS_LIMIT);
 
   const doneTasks = allTasks
     .filter((task) => task.status === "done")
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-    .slice(0, 3);
+    .slice(0, DONE_TASKS_LIMIT);
 
   const previewTasks = activeTasks.length > 0 ? activeTasks : doneTasks;
   const progress = taskCounts.total > 0 ? Math.round((taskCounts.done / taskCounts.total) * 100) : 0;
@@ -81,8 +84,10 @@ export function ProjectOverview({ project, members, isAdmin }: ProjectOverviewPr
   const memberCount = members.length - adminCount;
 
   const handleSave = () => {
-    updateProject.mutate({ name, description });
-    setIsEditing(false);
+    updateProject.mutate(
+      { name, description },
+      { onSuccess: () => setIsEditing(false) },
+    );
   };
 
   const handleCancel = () => {
@@ -157,8 +162,8 @@ export function ProjectOverview({ project, members, isAdmin }: ProjectOverviewPr
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1fr_20rem]">
-        <div className="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-foreground/15 dark:bg-card dark:shadow-none">
+      <section className="grid gap-4 lg:grid-cols-[1fr_20rem] min-w-0">
+        <div className="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-foreground/15 dark:bg-card dark:shadow-none overflow-hidden">
           <div className="flex items-center justify-between gap-4 border-b border-slate-200 p-4 dark:border-foreground/10">
             <div>
               <h3 className="text-base font-medium text-foreground">Active work</h3>
@@ -182,7 +187,7 @@ export function ProjectOverview({ project, members, isAdmin }: ProjectOverviewPr
           </div>
         </div>
 
-        <aside className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-foreground/15 dark:bg-card dark:shadow-none">
+        <aside className="rounded-xl border min-w-0 border-slate-200 bg-white p-4 shadow-sm dark:border-foreground/15 dark:bg-card dark:shadow-none overflow-hidden">
           <p className="section-header">Project details</p>
           <div className="mt-4 space-y-3">
             <DetailRow label="Created" value={formatDate(project.createdAt)} />
@@ -268,7 +273,7 @@ function TaskPreview({
           <TaskStatusIcon status={task.status} />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-foreground">{task.title}</p>
-            {task.description && <p className="meta-text mt-0.5 truncate">{task.description}</p>}
+            {task.description && <p className="mt-0.5 truncate">{task.description}</p>}
           </div>
           <Badge variant={task.status === "done" ? "default" : task.status === "in_progress" ? "secondary" : "outline"}>
             {TaskStatusLabels[task.status]}

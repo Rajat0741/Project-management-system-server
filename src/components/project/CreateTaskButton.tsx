@@ -235,7 +235,7 @@ function CreateTaskDialog({ isOpen, onClose, projectId, members }: CreateTaskDia
                 <div className="space-y-2 mt-2">
                   {attachments.map((file, index) => (
                     <div key={index} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
-                      <span className="text-sm truncate max-w-[200px]">{file.name}</span>
+                      <span className="text-sm truncate max-w-50">{file.name}</span>
                       <Button type="button" variant="ghost" size="icon" onClick={() => removeAttachment(index)}>
                         <X className="h-4 w-4 text-muted-foreground" />
                       </Button>

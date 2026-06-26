@@ -1,4 +1,4 @@
-import express from "express"
+import express from "express";
 import type { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -15,29 +15,28 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"],
 }))
 
-// basic configuration 
-app.use(cookieParser())
+// basic configuration
+app.use(cookieParser());
 app.use(express.json({ limit: "16kb" }));
-app.use(express.urlencoded({ extended: true, limit: "16kb" }))
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 
 //Import Routes
-import healthCheckRouter from "./routes/healthcheck.routes.js"
-import authRouter from "./routes/auth.routes.js"
-import projectRouter from "./routes/project.routes.js"
-import taskRouter from "./routes/task.routes.js"
-import noteRouter from "./routes/note.routes.js"
+import healthCheckRouter from "./routes/healthcheck.routes.js";
+import authRouter from "./routes/auth.routes.js";
+import projectRouter from "./routes/project.routes.js";
+import taskRouter from "./routes/task.routes.js";
+import noteRouter from "./routes/note.routes.js";
 
-app.use("/api/v1/healthCheck",healthCheckRouter)
-app.use("/api/v1/auth",authRouter)
+app.use("/api/v1/healthCheck", healthCheckRouter);
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/projects", projectRouter);
 app.use("/api/v1/tasks", taskRouter);
 app.use("/api/v1/notes", noteRouter);
 
-
 app.get("/", (req, res) => {
-    res.send("Initialization succeeded")
-})
+    res.send("Initialization succeeded");
+});
 
 app.use((req, res, next) => {
     const error = new ApiError(404, `Route ${req.originalUrl} not found`);
@@ -55,6 +54,6 @@ app.use((err: ApiError, req: Request, res: Response, _next: NextFunction) => {
         errors: err.errors || [],
         stack: env.NODE_ENV === "development" ? err.stack : undefined,
     });
-})
+});
 
 export default app;

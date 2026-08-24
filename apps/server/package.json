@@ -1,0 +1,43 @@
+{
+  "name": "@pms/server",
+  "version": "1.0.1",
+  "description": "project management application",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc && tsc-alias"
+  },
+  "author": "Rajat",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mailgen": "^2.0.7",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^25.6.0",
+    "prettier": "^3.8.4",
+    "tsc-alias": "^1.8.17",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  },
+  "dependencies": {
+    "@imagekit/nodejs": "^7.8.1",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "googleapis": "^171.4.0",
+    "jsonwebtoken": "^9.0.3",
+    "mailgen": "^2.0.34",
+    "mongoose": "^9.7.2",
+    "multer": "^2.2.0",
+    "zod": "^4.4.3"
+  }
+}

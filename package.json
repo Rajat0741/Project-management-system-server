@@ -8,6 +8,6 @@
     "lint": "turbo run lint"
   },
   "devDependencies": {
-    "turbo": "^2.5.10"
+    "turbo": "^2.10.11"
   }
 }

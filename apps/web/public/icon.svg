@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Rounded square background matching bg-primary -->
+  <rect width="32" height="32" rx="7" ry="7" fill="#212121"/>
+
+  <!-- ClipboardCheck icon (Lucide, 24x24 scaled to fit in 8–24 range = 8px padding each side) -->
+  <g transform="translate(5, 5) scale(0.916)" stroke="#fafafa" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- clipboard top bar -->
+    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+    <!-- clipboard body -->
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+    <!-- checkmark -->
+    <path d="m9 14 2 2 4-4"/>
+  </g>
+</svg>

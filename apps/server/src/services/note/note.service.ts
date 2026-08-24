@@ -1,71 +1,71 @@
+import type { Types } from "mongoose";
 import { ProjectNote } from "../../models/note.models.js";
 import ApiError from "../../utils/api-errors.js";
 import { toObjectId } from "../shared/index.js";
-import type { Types } from "mongoose";
 
 const getNotesService = async (projectId: string) => {
-    return ProjectNote.find({
-        project: toObjectId(projectId),
-    }).populate("lastUpdatedBy", "username fullName avatar");
+  return ProjectNote.find({
+    project: toObjectId(projectId),
+  }).populate("lastUpdatedBy", "username fullName avatar");
 };
 
 const getNoteByIdService = async (noteId: string) => {
-    const note = await ProjectNote.findById(toObjectId(noteId)).populate(
-        "lastUpdatedBy",
-        "username fullName avatar",
-    );
+  const note = await ProjectNote.findById(toObjectId(noteId)).populate(
+    "lastUpdatedBy",
+    "username fullName avatar",
+  );
 
-    if (!note) {
-        throw new ApiError(404, "Note not found");
-    }
+  if (!note) {
+    throw new ApiError(404, "Note not found");
+  }
 
-    return note;
+  return note;
 };
 
 const createNoteService = async (
-    projectId: string,
-    content: string,
-    userId: Types.ObjectId,
+  projectId: string,
+  content: string,
+  userId: Types.ObjectId,
 ) => {
-    return ProjectNote.create({
-        project: toObjectId(projectId),
-        content,
-        lastUpdatedBy: toObjectId(userId),
-    });
+  return ProjectNote.create({
+    project: toObjectId(projectId),
+    content,
+    lastUpdatedBy: toObjectId(userId),
+  });
 };
 
 const updateNoteService = async (
-    noteId: string,
-    content: string,
-    userId: Types.ObjectId,
+  noteId: string,
+  content: string,
+  userId: Types.ObjectId,
 ) => {
-    const note = await ProjectNote.findById(toObjectId(noteId));
+  const note = await ProjectNote.findById(toObjectId(noteId));
 
-    if (!note) {
-        throw new ApiError(404, "Note not found");
-    }
+  if (!note) {
+    throw new ApiError(404, "Note not found");
+  }
 
-    note.content = content;
-    note.lastUpdatedBy = toObjectId(userId);
-    await note.save();
+  note.content = content;
+  note.lastUpdatedBy = toObjectId(userId);
+  await note.save();
 
-    return note;
+  return note;
 };
 
 const deleteNoteService = async (noteId: string) => {
-    const note = await ProjectNote.findByIdAndDelete(toObjectId(noteId));
+  const note = await ProjectNote.findByIdAndDelete(toObjectId(noteId));
 
-    if (!note) {
-        throw new ApiError(404, "Note not found");
-    }
+  if (!note) {
+    throw new ApiError(404, "Note not found");
+  }
 
-    return note;
+  return note;
 };
 
 export {
-    getNotesService,
-    getNoteByIdService,
-    createNoteService,
-    updateNoteService,
-    deleteNoteService,
+  createNoteService,
+  deleteNoteService,
+  getNoteByIdService,
+  getNotesService,
+  updateNoteService,
 };

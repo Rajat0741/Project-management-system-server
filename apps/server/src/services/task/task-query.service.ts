@@ -4,100 +4,98 @@ import { toObjectId } from "../shared/index.js";
 import { mapTasksWithFilteredAttachments } from "./task-mapper.service.js";
 
 const getTasksService = async (projectId: string) => {
+  const tasks = await Tasks.find({
+    project: toObjectId(projectId),
+  }).populate("assignedTo", "avatar username fullName");
 
-    const tasks = await Tasks.find({
-        project: toObjectId(projectId),
-    }).populate("assignedTo", "avatar username fullName");
-
-    return mapTasksWithFilteredAttachments(tasks);
+  return mapTasksWithFilteredAttachments(tasks);
 };
 
 const getTaskByIdService = async (projectId: string, taskId: string) => {
-
-    const task = await Tasks.aggregate([
-        {
-            $match: {
-                // Enforce project/task linkage at query level to prevent cross-project reads.
-                _id: toObjectId(taskId),
-                project: toObjectId(projectId),
+  const task = await Tasks.aggregate([
+    {
+      $match: {
+        // Enforce project/task linkage at query level to prevent cross-project reads.
+        _id: toObjectId(taskId),
+        project: toObjectId(projectId),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "assignedTo",
+        foreignField: "_id",
+        as: "assignedToDetails",
+        pipeline: [
+          {
+            $project: {
+              _id: 1,
+              username: 1,
+              fullName: 1,
+              avatar: 1,
             },
-        },
-        {
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "subtasks",
+        localField: "_id",
+        foreignField: "task",
+        as: "subtasks",
+        pipeline: [
+          {
             $lookup: {
-                from: "users",
-                localField: "assignedTo",
-                foreignField: "_id",
-                as: "assignedToDetails",
-                pipeline: [
-                    {
-                        $project: {
-                            _id: 1,
-                            username: 1,
-                            fullName: 1,
-                            avatar: 1,
-                        },
-                    },
-                ],
-            },
-        },
-        {
-            $lookup: {
-                from: "subtasks",
-                localField: "_id",
-                foreignField: "task",
-                as: "subtasks",
-                pipeline: [
-                    {
-                        $lookup: {
-                            from: "users",
-                            localField: "assignedBy",
-                            foreignField: "_id",
-                            as: "assignedByDetails",
-                            pipeline: [
-                                {
-                                    $project: {
-                                        _id: 1,
-                                        username: 1,
-                                        fullName: 1,
-                                        avatar: 1,
-                                    },
-                                },
-                            ],
-                        },
-                    },
-                    {
-                        $addFields: {
-                            createdBy: {
-                                $arrayElemAt: ["$assignedByDetails", 0],
-                            },
-                        },
-                    },
-                ],
-            },
-        },
-        {
-            $addFields: {
-                createdBy: { $arrayElemAt: ["$assignedByDetails", 0] },
-                attachments: {
-                    $map: {
-                        input: "$attachments",
-                        as: "attachment",
-                        in: {
-                            fileId: "$$attachment.fileId",
-                            url: "$$attachment.url",
-                            thumbnail: "$$attachment.thumbnail",
-                        },
-                    },
+              from: "users",
+              localField: "assignedBy",
+              foreignField: "_id",
+              as: "assignedByDetails",
+              pipeline: [
+                {
+                  $project: {
+                    _id: 1,
+                    username: 1,
+                    fullName: 1,
+                    avatar: 1,
+                  },
                 },
+              ],
             },
+          },
+          {
+            $addFields: {
+              createdBy: {
+                $arrayElemAt: ["$assignedByDetails", 0],
+              },
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        createdBy: { $arrayElemAt: ["$assignedByDetails", 0] },
+        attachments: {
+          $map: {
+            input: "$attachments",
+            as: "attachment",
+            in: {
+              fileId: "$$attachment.fileId",
+              url: "$$attachment.url",
+              thumbnail: "$$attachment.thumbnail",
+            },
+          },
         },
-    ]);
+      },
+    },
+  ]);
 
-    if (!task.length) {
-        throw new ApiError(404, "Task not found");
-    }
+  if (!task.length) {
+    throw new ApiError(404, "Task not found");
+  }
 
-    return task[0];
+  return task[0];
 };
 
-export { getTasksService, getTaskByIdService };
+export { getTaskByIdService, getTasksService };

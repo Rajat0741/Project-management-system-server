@@ -1,9 +1,15 @@
-import type { Task, SubTask, TaskAttachment, SuccessResponse, toggleSubTaskResponse } from "@/types";
-import type { CreateTaskData, UpdateTaskData } from "@/schemas/task.schema";
-import apiClient from "@/lib/axiosApi";
 import { queryOptions, useMutation } from "@tanstack/react-query";
-import { queryClient, router } from "@/router";
 import { toast } from "sonner";
+import apiClient from "@/lib/axiosApi";
+import { queryClient, router } from "@/router";
+import type { CreateTaskData, UpdateTaskData } from "@/schemas/task.schema";
+import type {
+  SubTask,
+  SuccessResponse,
+  Task,
+  TaskAttachment,
+  toggleSubTaskResponse,
+} from "@/types";
 
 // -------- Mutations --------
 
@@ -17,7 +23,8 @@ export const useCreateTask = (projectId: string) => {
       if (attachments && attachments.length > 0) {
         const formData = new FormData();
         formData.append("title", taskData.title);
-        if (taskData.description) formData.append("description", taskData.description);
+        if (taskData.description)
+          formData.append("description", taskData.description);
         formData.append("assignedTo", taskData.assignedTo);
         formData.append("status", taskData.status);
 
@@ -31,14 +38,21 @@ export const useCreateTask = (projectId: string) => {
           formData.append("attachments", file);
         });
 
-        const response: SuccessResponse<Task> = await apiClient.post(`/tasks/${projectId}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const response: SuccessResponse<Task> = await apiClient.post(
+          `/tasks/${projectId}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          },
+        );
         return response.data.data;
       }
 
       // No attachments, send JSON
-      const response: SuccessResponse<Task> = await apiClient.post(`/tasks/${projectId}`, taskData);
+      const response: SuccessResponse<Task> = await apiClient.post(
+        `/tasks/${projectId}`,
+        taskData,
+      );
       return response.data.data;
     },
     onSuccess: () => {
@@ -53,7 +67,10 @@ export const useCreateTask = (projectId: string) => {
 export const useUpdateTask = (projectId: string, taskId: string) => {
   return useMutation({
     mutationFn: async (data: UpdateTaskData) => {
-      const response: SuccessResponse<Task> = await apiClient.put(`/tasks/${projectId}/${taskId}`, data);
+      const response: SuccessResponse<Task> = await apiClient.put(
+        `/tasks/${projectId}/${taskId}`,
+        data,
+      );
       return response.data.data;
     },
     onSuccess: () => {
@@ -85,7 +102,10 @@ export const useDeleteTask = (projectId: string) => {
 export const useCreateSubtask = (projectId: string, taskId: string) => {
   return useMutation({
     mutationFn: async (data: { title: string }) => {
-      const response: SuccessResponse<SubTask> = await apiClient.post(`/tasks/${projectId}/${taskId}/subtasks`, data);
+      const response: SuccessResponse<SubTask> = await apiClient.post(
+        `/tasks/${projectId}/${taskId}/subtasks`,
+        data,
+      );
       return response.data.data;
     },
     onSuccess: () => {
@@ -99,7 +119,13 @@ export const useCreateSubtask = (projectId: string, taskId: string) => {
 // Update a subtask
 export const useUpdateSubtask = (projectId: string, taskId: string) => {
   return useMutation({
-    mutationFn: async ({ subtaskId, data }: { subtaskId: string; data: { title?: string; isCompleted?: boolean } }) => {
+    mutationFn: async ({
+      subtaskId,
+      data,
+    }: {
+      subtaskId: string;
+      data: { title?: string; isCompleted?: boolean };
+    }) => {
       const response: SuccessResponse<SubTask> = await apiClient.put(
         `/tasks/${projectId}/${taskId}/subtasks/${subtaskId}`,
         data,
@@ -117,7 +143,9 @@ export const useUpdateSubtask = (projectId: string, taskId: string) => {
 export const useDeleteSubtask = (projectId: string, taskId: string) => {
   return useMutation({
     mutationFn: async (subtaskId: string) => {
-      await apiClient.delete(`/tasks/${projectId}/${taskId}/subtasks/${subtaskId}`);
+      await apiClient.delete(
+        `/tasks/${projectId}/${taskId}/subtasks/${subtaskId}`,
+      );
     },
     onSuccess: () => {
       toast.success("Subtask deleted successfully");
@@ -130,11 +158,18 @@ export const useDeleteSubtask = (projectId: string, taskId: string) => {
 // Toggle subtask status (Auto-updates parent task status)
 export const useToggleSubtaskStatus = (projectId: string, taskId: string) => {
   return useMutation({
-    mutationFn: async ({ subtaskId, isCompleted }: { subtaskId: string; isCompleted: boolean }) => {
-      const response: SuccessResponse<toggleSubTaskResponse> = await apiClient.patch(
-        `/tasks/${projectId}/${taskId}/subtasks/${subtaskId}/status`,
-        { isCompleted },
-      );
+    mutationFn: async ({
+      subtaskId,
+      isCompleted,
+    }: {
+      subtaskId: string;
+      isCompleted: boolean;
+    }) => {
+      const response: SuccessResponse<toggleSubTaskResponse> =
+        await apiClient.patch(
+          `/tasks/${projectId}/${taskId}/subtasks/${subtaskId}/status`,
+          { isCompleted },
+        );
       return response.data.data;
     },
     onSuccess: () => {
@@ -173,7 +208,9 @@ export const useAddAttachment = (projectId: string, taskId: string) => {
 export const useDeleteAttachment = (projectId: string, taskId: string) => {
   return useMutation({
     mutationFn: async (fileId: string) => {
-      await apiClient.delete(`/tasks/${projectId}/${taskId}/attachments`, { data: { fileId } });
+      await apiClient.delete(`/tasks/${projectId}/${taskId}/attachments`, {
+        data: { fileId },
+      });
     },
     onSuccess: () => {
       toast.success("Attachment deleted");
@@ -187,13 +224,20 @@ export const useDeleteAttachment = (projectId: string, taskId: string) => {
 
 // Fetch all tasks for a project
 export const fetchTasks = async (projectId: string): Promise<Task[]> => {
-  const response: SuccessResponse<Task[]> = await apiClient.get(`/tasks/${projectId}`);
+  const response: SuccessResponse<Task[]> = await apiClient.get(
+    `/tasks/${projectId}`,
+  );
   return response.data.data;
 };
 
 // Fetch a single task by ID (includes subtasks)
-export const fetchTaskById = async (projectId: string, taskId: string): Promise<Task> => {
-  const response: SuccessResponse<Task> = await apiClient.get(`/tasks/${projectId}/${taskId}`);
+export const fetchTaskById = async (
+  projectId: string,
+  taskId: string,
+): Promise<Task> => {
+  const response: SuccessResponse<Task> = await apiClient.get(
+    `/tasks/${projectId}/${taskId}`,
+  );
   return response.data.data;
 };
 

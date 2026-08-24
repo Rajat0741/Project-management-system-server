@@ -1,18 +1,25 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { projectFetchingQueryOptions, projectMembersFetchingQueryOptions } from "@/hooks/useProjects";
+import { createFileRoute } from "@tanstack/react-router";
 import { ProjectDetails } from "@/components/project/ProjectPage";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetCurrentUser } from "@/hooks/useAuth";
+import {
+  projectFetchingQueryOptions,
+  projectMembersFetchingQueryOptions,
+} from "@/hooks/useProjects";
 
 export const Route = createFileRoute("/_protected/project/$projectid")({
   beforeLoad: async ({ context, params }) => {
     // Ensure project details are preloaded
-    await context.queryClient.ensureQueryData(projectFetchingQueryOptions(params.projectid));
+    await context.queryClient.ensureQueryData(
+      projectFetchingQueryOptions(params.projectid),
+    );
   },
   loader: ({ context, params }) => {
     // Start fetching members in loader
-    context.queryClient.ensureQueryData(projectMembersFetchingQueryOptions(params.projectid));
+    context.queryClient.ensureQueryData(
+      projectMembersFetchingQueryOptions(params.projectid),
+    );
   },
   component: ProjectRouteComponent,
   pendingComponent: LoadingComponent,
@@ -23,9 +30,13 @@ function ProjectRouteComponent() {
   const { projectid } = Route.useParams();
 
   // Suspend component until project data is available (since we ensured it in beforeLoad)
-  const { data: project } = useSuspenseQuery(projectFetchingQueryOptions(projectid));
+  const { data: project } = useSuspenseQuery(
+    projectFetchingQueryOptions(projectid),
+  );
 
-  const { data: members } = useSuspenseQuery(projectMembersFetchingQueryOptions(projectid));
+  const { data: members } = useSuspenseQuery(
+    projectMembersFetchingQueryOptions(projectid),
+  );
 
   // Get current user to check role
   const { data: currentUserResponse } = useGetCurrentUser();
@@ -37,7 +48,11 @@ function ProjectRouteComponent() {
 
   return (
     <div className="w-full h-full p-4 md:p-8">
-      <ProjectDetails project={project} members={members} currentUserRole={userRole} />
+      <ProjectDetails
+        project={project}
+        members={members}
+        currentUserRole={userRole}
+      />
     </div>
   );
 }

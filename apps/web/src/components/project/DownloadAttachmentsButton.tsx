@@ -1,15 +1,18 @@
-import { useState } from "react";
 import { Download, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { downloadAttachmentsAsZip } from "@/lib/zipUtils";
-import { toast } from "sonner";
 
 interface DownloadAttachmentsButtonProps {
   attachments: { url: string; filename?: string }[];
   fileName: string;
 }
 
-export function DownloadAttachmentsButton({ attachments, fileName }: DownloadAttachmentsButtonProps) {
+export function DownloadAttachmentsButton({
+  attachments,
+  fileName,
+}: DownloadAttachmentsButtonProps) {
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownload = async () => {
@@ -35,7 +38,11 @@ export function DownloadAttachmentsButton({ attachments, fileName }: DownloadAtt
       disabled={isDownloading}
       className="h-6 text-md p-4 gap-1.5 bg-muted text-foreground hover:text-muted-foreground"
     >
-      {isDownloading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Download className="h-3 w-3" />}
+      {isDownloading ? (
+        <Loader2 className="h-3 w-3 animate-spin" />
+      ) : (
+        <Download className="h-3 w-3" />
+      )}
       Download All
     </Button>
   );

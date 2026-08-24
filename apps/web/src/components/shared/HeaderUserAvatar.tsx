@@ -1,5 +1,14 @@
+import {
+  Camera,
+  ChevronsUpDown,
+  LayoutDashboard,
+  Loader2,
+  LogOut,
+  Moon,
+  Sun,
+  User,
+} from "lucide-react";
 import { useRef } from "react";
-import { LayoutDashboard, LogOut, Sun, Moon, Camera, Loader2, User, ChevronsUpDown } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -77,19 +86,29 @@ export function HeaderUserAvatar({ user }: HeaderUserAvatarProps) {
           <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col items-start text-left text-sm leading-tight">
-          <span className="truncate font-medium max-w-30 text-gray-900 dark:text-gray-100">{user.name}</span>
-          <span className="truncate text-xs text-gray-500 dark:text-gray-400 max-w-30">{user.email}</span>
+          <span className="truncate font-medium max-w-30 text-gray-900 dark:text-gray-100">
+            {user.name}
+          </span>
+          <span className="truncate text-xs text-gray-500 dark:text-gray-400 max-w-30">
+            {user.email}
+          </span>
         </div>
         <ChevronsUpDown className="ml-auto size-4 text-gray-400 dark:text-gray-500" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64 rounded-xl p-2" align="end" sideOffset={8}>
+      <DropdownMenuContent
+        className="w-64 rounded-xl p-2"
+        align="end"
+        sideOffset={8}
+      >
         {/* User Profile Card */}
         <div className="px-2 py-3 text-left">
           <div className="flex items-center gap-3">
             <div className="relative group">
               <Avatar size="lg" className="ring-2 ring-primary/10">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="text-base">{getInitials(user.name)}</AvatarFallback>
+                <AvatarFallback className="text-base">
+                  {getInitials(user.name)}
+                </AvatarFallback>
               </Avatar>
               {/* Avatar overlay for changing picture */}
               <Button
@@ -104,26 +123,38 @@ export function HeaderUserAvatar({ user }: HeaderUserAvatarProps) {
                   <Camera className="size-4 text-white" />
                 )}
               </Button>
-              <input ref={fileInputRef} placeholder="Avatar" type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+              <input
+                ref={fileInputRef}
+                placeholder="Avatar"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
             </div>
             <div className="flex-1 min-w-0">
               <p className="truncate font-semibold text-sm">{user.name}</p>
-              <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+              <p className="truncate text-xs text-muted-foreground">
+                {user.email}
+              </p>
             </div>
           </div>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={navigateToProjects} className="rounded-lg cursor-pointer">
+          <DropdownMenuItem
+            onClick={navigateToProjects}
+            className="rounded-lg cursor-pointer"
+          >
             <LayoutDashboard className="mr-2 size-4" />
             Dashboard
           </DropdownMenuItem>
-          <DropdownMenuItem 
+          <DropdownMenuItem
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               navigateToProfile();
-            }} 
+            }}
             className="rounded-lg cursor-pointer"
           >
             <User className="mr-2 size-4" />
@@ -131,8 +162,15 @@ export function HeaderUserAvatar({ user }: HeaderUserAvatarProps) {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={toggleTheme} className="rounded-lg cursor-pointer">
-          {isDark ? <Sun className="mr-2 size-4" /> : <Moon className="mr-2 size-4" />}
+        <DropdownMenuItem
+          onClick={toggleTheme}
+          className="rounded-lg cursor-pointer"
+        >
+          {isDark ? (
+            <Sun className="mr-2 size-4" />
+          ) : (
+            <Moon className="mr-2 size-4" />
+          )}
           {isDark ? "Light Mode" : "Dark Mode"}
         </DropdownMenuItem>
         <DropdownMenuSeparator />

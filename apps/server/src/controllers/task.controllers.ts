@@ -1,211 +1,213 @@
-import ApiResponse from "../utils/api-response.js";
+import {
+  addSingleAttachmentToTaskService,
+  createSubtaskService,
+  createTaskService,
+  deleteAttachmentFromTaskService,
+  deleteSubtaskService,
+  deleteTaskService,
+  getTaskByIdService,
+  getTasksService,
+  mapTaskWithFilteredAttachments,
+  updateSubtaskService,
+  updateSubtaskStatusService,
+  updateTaskService,
+} from "../services/task/index.js";
 import ApiError from "../utils/api-errors.js";
+import ApiResponse from "../utils/api-response.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import type {
-    GetTasksSchemaType,
-    GetTaskByIdSchemaType,
-    CreateTaskSchemaType,
-    UpdateTaskSchemaType,
-    DeleteTaskSchemaType,
-    AssignAttachmentSchemaType,
-    DeleteAttachmentSchemaType,
-    CreateSubtaskSchemaType,
-    UpdateSubtaskSchemaType,
-    DeleteSubtaskSchemaType,
-    UpdateSubtaskStatusSchemaType,
+  AssignAttachmentSchemaType,
+  CreateSubtaskSchemaType,
+  CreateTaskSchemaType,
+  DeleteAttachmentSchemaType,
+  DeleteSubtaskSchemaType,
+  DeleteTaskSchemaType,
+  GetTaskByIdSchemaType,
+  GetTasksSchemaType,
+  UpdateSubtaskSchemaType,
+  UpdateSubtaskStatusSchemaType,
+  UpdateTaskSchemaType,
 } from "../validators/task.validators.js";
-import {
-    getTasksService,
-    getTaskByIdService,
-    createTaskService,
-    updateTaskService,
-    deleteTaskService,
-    createSubtaskService,
-    updateSubtaskService,
-    deleteSubtaskService,
-    updateSubtaskStatusService,
-    addSingleAttachmentToTaskService,
-    deleteAttachmentFromTaskService,
-    mapTaskWithFilteredAttachments,
-} from "../services/task/index.js";
 
 const getTasks = asyncHandler(async (req, res) => {
-    const params = req.params as GetTasksSchemaType["params"];
-    const tasks = await getTasksService(params.projectId);
+  const params = req.params as GetTasksSchemaType["params"];
+  const tasks = await getTasksService(params.projectId);
 
-    res.status(200).json(
-        new ApiResponse(200, tasks, "Tasks fetched successfully"),
-    );
+  res
+    .status(200)
+    .json(new ApiResponse(200, tasks, "Tasks fetched successfully"));
 });
 
 const getTaskById = asyncHandler(async (req, res) => {
-    const params = req.params as GetTaskByIdSchemaType["params"];
-    const task = await getTaskByIdService(params.projectId, params.taskId);
+  const params = req.params as GetTaskByIdSchemaType["params"];
+  const task = await getTaskByIdService(params.projectId, params.taskId);
 
-    res.status(200).json(
-        new ApiResponse(200, task, "Task and Subtasks fetched successfully"),
-    );
+  res
+    .status(200)
+    .json(new ApiResponse(200, task, "Task and Subtasks fetched successfully"));
 });
 
 const createTask = asyncHandler(async (req, res) => {
-    const params = req.params as CreateTaskSchemaType["params"];
-    const body = req.body as CreateTaskSchemaType["body"];
-    const files = (req.files as Express.Multer.File[] | undefined) ?? [];
+  const params = req.params as CreateTaskSchemaType["params"];
+  const body = req.body as CreateTaskSchemaType["body"];
+  const files = (req.files as Express.Multer.File[] | undefined) ?? [];
 
-    const { task, createdSubtasks } = await createTaskService({
-        projectId: params.projectId,
-        title: body.title,
-        description: body.description,
-        assignedTo: body.assignedTo,
-        status: body.status,
-        subtasks: body.subtasks,
-        userId: req.user._id,
-        files,
-    });
+  const { task, createdSubtasks } = await createTaskService({
+    projectId: params.projectId,
+    title: body.title,
+    description: body.description,
+    assignedTo: body.assignedTo,
+    status: body.status,
+    subtasks: body.subtasks,
+    userId: req.user._id,
+    files,
+  });
 
-    const taskResponse = {
-        ...mapTaskWithFilteredAttachments(task),
-        subtasks: createdSubtasks,
-    };
+  const taskResponse = {
+    ...mapTaskWithFilteredAttachments(task),
+    subtasks: createdSubtasks,
+  };
 
-    res.status(201).json(
-        new ApiResponse(201, taskResponse, "Task Created successfully"),
-    );
+  res
+    .status(201)
+    .json(new ApiResponse(201, taskResponse, "Task Created successfully"));
 });
 
 const updateTask = asyncHandler(async (req, res) => {
-    const params = req.params as UpdateTaskSchemaType["params"];
-    const body = req.body as UpdateTaskSchemaType["body"];
+  const params = req.params as UpdateTaskSchemaType["params"];
+  const body = req.body as UpdateTaskSchemaType["body"];
 
-    const task = await updateTaskService(
-        params.taskId,
-        body.title,
-        body.description,
-        body.assignedTo,
-        body.status,
-    );
+  const task = await updateTaskService(
+    params.taskId,
+    body.title,
+    body.description,
+    body.assignedTo,
+    body.status,
+  );
 
-    res.status(200).json(
-        new ApiResponse(
-            200,
-            mapTaskWithFilteredAttachments(task),
-            "Task updated successfully",
-        ),
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        mapTaskWithFilteredAttachments(task),
+        "Task updated successfully",
+      ),
     );
 });
 
 const deleteTask = asyncHandler(async (req, res) => {
-    const params = req.params as DeleteTaskSchemaType["params"];
-    const task = await deleteTaskService(params.taskId);
+  const params = req.params as DeleteTaskSchemaType["params"];
+  const task = await deleteTaskService(params.taskId);
 
-    res.status(200).json(
-        new ApiResponse(200, task, "Task deleted successfully"),
-    );
+  res.status(200).json(new ApiResponse(200, task, "Task deleted successfully"));
 });
 
 const createSubtask = asyncHandler(async (req, res) => {
-    const params = req.params as CreateSubtaskSchemaType["params"];
-    const body = req.body as CreateSubtaskSchemaType["body"];
+  const params = req.params as CreateSubtaskSchemaType["params"];
+  const body = req.body as CreateSubtaskSchemaType["body"];
 
-    const subtask = await createSubtaskService(
-        params.taskId,
-        body.title,
-        req.user._id,
-    );
+  const subtask = await createSubtaskService(
+    params.taskId,
+    body.title,
+    req.user._id,
+  );
 
-    res.status(201).json(
-        new ApiResponse(201, subtask, "Subtask created successfully"),
-    );
+  res
+    .status(201)
+    .json(new ApiResponse(201, subtask, "Subtask created successfully"));
 });
 
 const updateSubtask = asyncHandler(async (req, res) => {
-    const params = req.params as UpdateSubtaskSchemaType["params"];
-    const body = req.body as UpdateSubtaskSchemaType["body"];
+  const params = req.params as UpdateSubtaskSchemaType["params"];
+  const body = req.body as UpdateSubtaskSchemaType["body"];
 
-    const subtask = await updateSubtaskService(
-        params.subtaskId,
-        body.title,
-        body.isCompleted,
-    );
+  const subtask = await updateSubtaskService(
+    params.subtaskId,
+    body.title,
+    body.isCompleted,
+  );
 
-    res.status(200).json(
-        new ApiResponse(200, subtask, "Subtask updated successfully"),
-    );
+  res
+    .status(200)
+    .json(new ApiResponse(200, subtask, "Subtask updated successfully"));
 });
 
 const deleteSubtask = asyncHandler(async (req, res) => {
-    const params = req.params as DeleteSubtaskSchemaType["params"];
-    const deletedSubtask = await deleteSubtaskService(params.subtaskId);
+  const params = req.params as DeleteSubtaskSchemaType["params"];
+  const deletedSubtask = await deleteSubtaskService(params.subtaskId);
 
-    res.status(200).json(
-        new ApiResponse(200, deletedSubtask, "Subtask deleted successfully"),
-    );
+  res
+    .status(200)
+    .json(new ApiResponse(200, deletedSubtask, "Subtask deleted successfully"));
 });
 
 const assignAttachment = asyncHandler(async (req, res) => {
-    const params = req.params as AssignAttachmentSchemaType["params"];
+  const params = req.params as AssignAttachmentSchemaType["params"];
 
-    if (!req.file) {
-        throw new ApiError(400, "Attachment file is required");
-    }
+  if (!req.file) {
+    throw new ApiError(400, "Attachment file is required");
+  }
 
-    const attachment = await addSingleAttachmentToTaskService(
-        params.taskId,
-        params.projectId,
-        req.file,
-    );
+  const attachment = await addSingleAttachmentToTaskService(
+    params.taskId,
+    params.projectId,
+    req.file,
+  );
 
-    res.status(200).json(
-        new ApiResponse(200, attachment, "Attachment uploaded successfully"),
-    );
+  res
+    .status(200)
+    .json(new ApiResponse(200, attachment, "Attachment uploaded successfully"));
 });
 
 const updateSubtaskStatus = asyncHandler(async (req, res) => {
-    const params = req.params as UpdateSubtaskStatusSchemaType["params"];
-    const body = req.body as UpdateSubtaskStatusSchemaType["body"];
+  const params = req.params as UpdateSubtaskStatusSchemaType["params"];
+  const body = req.body as UpdateSubtaskStatusSchemaType["body"];
 
-    const result = await updateSubtaskStatusService(
-        params.taskId,
-        params.subtaskId,
-        body.isCompleted,
-        req.user._id,
-        req.user.role,
-    );
+  const result = await updateSubtaskStatusService(
+    params.taskId,
+    params.subtaskId,
+    body.isCompleted,
+    req.user._id,
+    req.user.role,
+  );
 
-    res.status(200).json(
-        new ApiResponse(200, result, "Subtask status updated successfully"),
-    );
+  res
+    .status(200)
+    .json(new ApiResponse(200, result, "Subtask status updated successfully"));
 });
 
 const deleteAttachment = asyncHandler(async (req, res) => {
-    const params = req.params as DeleteAttachmentSchemaType["params"];
-    const body = req.body as DeleteAttachmentSchemaType["body"];
+  const params = req.params as DeleteAttachmentSchemaType["params"];
+  const body = req.body as DeleteAttachmentSchemaType["body"];
 
-    if (!body.fileId) {
-        throw new ApiError(400, "File ID is required");
-    }
+  if (!body.fileId) {
+    throw new ApiError(400, "File ID is required");
+  }
 
-    await deleteAttachmentFromTaskService(params.taskId, body.fileId);
+  await deleteAttachmentFromTaskService(params.taskId, body.fileId);
 
-    res.status(200).json(
-        new ApiResponse(
-            200,
-            { fileId: body.fileId },
-            "Attachment deleted successfully",
-        ),
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { fileId: body.fileId },
+        "Attachment deleted successfully",
+      ),
     );
 });
 
 export {
-    getTasks,
-    getTaskById,
-    createTask,
-    updateTask,
-    deleteTask,
-    createSubtask,
-    updateSubtask,
-    deleteSubtask,
-    updateSubtaskStatus,
-    assignAttachment,
-    deleteAttachment,
+  assignAttachment,
+  createSubtask,
+  createTask,
+  deleteAttachment,
+  deleteSubtask,
+  deleteTask,
+  getTaskById,
+  getTasks,
+  updateSubtask,
+  updateSubtaskStatus,
+  updateTask,
 };

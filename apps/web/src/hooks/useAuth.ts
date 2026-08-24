@@ -1,11 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { LoginFormData, RegisterFormData } from "@/schemas/auth.schema";
-import type { changePasswordFormData, SuccessResponse, User } from "@/types";
-import apiClient from "@/lib/axiosApi";
-import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
-import { useUserStore } from "@/store/userData";
+import { toast } from "sonner";
+import apiClient from "@/lib/axiosApi";
 import { queryClient, router } from "@/router";
+import type { LoginFormData, RegisterFormData } from "@/schemas/auth.schema";
+import { useUserStore } from "@/store/userData";
+import type { changePasswordFormData, SuccessResponse, User } from "@/types";
 
 /*
 response.data = {
@@ -23,7 +23,10 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: async (data: LoginFormData) => {
-      const response: SuccessResponse<User> = await apiClient.post("/auth/login", data);
+      const response: SuccessResponse<User> = await apiClient.post(
+        "/auth/login",
+        data,
+      );
       return response.data.data;
     },
     onSuccess: async (data) => {
@@ -112,7 +115,8 @@ export const useGetCurrentUser = () => {
   return useQuery({
     queryKey: ["currentUser"],
     queryFn: async () => {
-      const response: SuccessResponse<User> = await apiClient.get("/auth/current-user");
+      const response: SuccessResponse<User> =
+        await apiClient.get("/auth/current-user");
       setUserData(response.data.data);
       return response.data;
     },
@@ -123,9 +127,13 @@ export const useGetCurrentUser = () => {
 export const useUpdateProfilePicture = () => {
   return useMutation({
     mutationFn: async (formData: FormData) => {
-      const response: SuccessResponse<User> = await apiClient.patch("/auth/avatar", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response: SuccessResponse<User> = await apiClient.patch(
+        "/auth/avatar",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
       return response.data.data;
     },
     onSuccess: () => {

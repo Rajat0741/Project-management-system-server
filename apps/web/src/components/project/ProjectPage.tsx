@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Project, ProjectMemberWithDetails } from "@/types";
-import { ProjectOverview } from "./ProjectOverview";
 import { ProjectMembers } from "./ProjectMembersList";
+import { ProjectOverview } from "./ProjectOverview";
 import { ProjectSettings } from "./ProjectSettings";
 import { ProjectTasks } from "./ProjectTasks";
 
@@ -11,7 +11,11 @@ interface ProjectDetailsProps {
   currentUserRole?: "admin" | "member";
 }
 
-export function ProjectDetails({ project, members, currentUserRole = "member" }: ProjectDetailsProps) {
+export function ProjectDetails({
+  project,
+  members,
+  currentUserRole = "member",
+}: ProjectDetailsProps) {
   const isAdmin = currentUserRole === "admin";
   return (
     <div className="space-y-4 max-w-full overflow-hidden">
@@ -25,20 +29,40 @@ export function ProjectDetails({ project, members, currentUserRole = "member" }:
           </TabsList>
         </div>
 
-        <TabsContent value="project" className="space-y-6 animate-in fade-in-0 slide-in-from-left-2 duration-300">
-          <ProjectOverview project={project} members={members} isAdmin={isAdmin} />
+        <TabsContent
+          value="project"
+          className="space-y-6 animate-in fade-in-0 slide-in-from-left-2 duration-300"
+        >
+          <ProjectOverview
+            project={project}
+            members={members}
+            isAdmin={isAdmin}
+          />
         </TabsContent>
 
-        <TabsContent value="members" className="pt-2 animate-in fade-in-0 slide-in-from-left-2 duration-300">
+        <TabsContent
+          value="members"
+          className="pt-2 animate-in fade-in-0 slide-in-from-left-2 duration-300"
+        >
           <ProjectMembers projectId={project._id} />
         </TabsContent>
 
-        <TabsContent value="tasks" className="pt-2 animate-in fade-in-0 slide-in-from-left-2 duration-300">
-          <ProjectTasks projectId={project._id} members={members} isAdmin={isAdmin} />
+        <TabsContent
+          value="tasks"
+          className="pt-2 animate-in fade-in-0 slide-in-from-left-2 duration-300"
+        >
+          <ProjectTasks
+            projectId={project._id}
+            members={members}
+            isAdmin={isAdmin}
+          />
         </TabsContent>
 
         {isAdmin && (
-          <TabsContent value="settings" className="pt-2 animate-in fade-in-0 slide-in-from-left-2 duration-300">
+          <TabsContent
+            value="settings"
+            className="pt-2 animate-in fade-in-0 slide-in-from-left-2 duration-300"
+          >
             <ProjectSettings project={project} />
           </TabsContent>
         )}

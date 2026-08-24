@@ -1,7 +1,7 @@
-import type { ErrorResponse } from "@/types";
-import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { router } from "@/router";
 import { useUserStore } from "@/store/userData";
+import type { ErrorResponse } from "@/types";
 
 // Extend Axios config to include retry flag
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
@@ -23,7 +23,11 @@ apiClient.interceptors.response.use(
   async (error: AxiosError<ErrorResponse>) => {
     const originalRequest = error.config as ExtendedAxiosRequestConfig;
 
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
 
       try {

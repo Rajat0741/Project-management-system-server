@@ -1,26 +1,49 @@
-import { useState } from "react";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, X, Paperclip, ListTodo } from "lucide-react";
-import { CreateTaskSchema, TaskStatusLabels, type CreateTaskData } from "@/schemas/task.schema";
-import { useCreateTask } from "@/hooks/useTasks";
-import type { ProjectMemberWithDetails } from "@/types";
-
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
-import { Spinner } from "@/components/ui/spinner";
+import { ListTodo, Paperclip, Plus, X } from "lucide-react";
+import { useState } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
+import { useCreateTask } from "@/hooks/useTasks";
+import {
+  type CreateTaskData,
+  CreateTaskSchema,
+  TaskStatusLabels,
+} from "@/schemas/task.schema";
+import type { ProjectMemberWithDetails } from "@/types";
 
 interface CreateTaskButtonProps {
   projectId: string;
   members: ProjectMemberWithDetails[];
 }
 
-export function CreateTaskButton({ projectId, members }: CreateTaskButtonProps) {
+export function CreateTaskButton({
+  projectId,
+  members,
+}: CreateTaskButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -29,7 +52,12 @@ export function CreateTaskButton({ projectId, members }: CreateTaskButtonProps) 
         <Plus className="mr-2 h-4 w-4" />
         Create Task
       </Button>
-      <CreateTaskDialog isOpen={isOpen} onClose={() => setIsOpen(false)} projectId={projectId} members={members} />
+      <CreateTaskDialog
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        projectId={projectId}
+        members={members}
+      />
     </>
   );
 }
@@ -41,7 +69,12 @@ interface CreateTaskDialogProps {
   members: ProjectMemberWithDetails[];
 }
 
-function CreateTaskDialog({ isOpen, onClose, projectId, members }: CreateTaskDialogProps) {
+function CreateTaskDialog({
+  isOpen,
+  onClose,
+  projectId,
+  members,
+}: CreateTaskDialogProps) {
   const [attachments, setAttachments] = useState<File[]>([]);
   const createTask = useCreateTask(projectId);
 
@@ -70,7 +103,8 @@ function CreateTaskDialog({ isOpen, onClose, projectId, members }: CreateTaskDia
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const allowedFiles = Array.from(e.target.files).filter(
-        (file) => file.type.startsWith("image/") || file.type === "application/pdf",
+        (file) =>
+          file.type.startsWith("image/") || file.type === "application/pdf",
       );
       setAttachments((prev) => [...prev, ...allowedFiles]);
     }
@@ -106,7 +140,11 @@ function CreateTaskDialog({ isOpen, onClose, projectId, members }: CreateTaskDia
           <DialogTitle>Create New Task</DialogTitle>
         </DialogHeader>
 
-        <form id="create-task-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form
+          id="create-task-form"
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
           <FieldGroup className="space-y-4">
             {/* Title */}
             <Field>
@@ -118,7 +156,10 @@ function CreateTaskDialog({ isOpen, onClose, projectId, members }: CreateTaskDia
             {/* Description */}
             <Field>
               <FieldLabel>Description (optional)</FieldLabel>
-              <Textarea {...register("description")} placeholder="Enter task description" />
+              <Textarea
+                {...register("description")}
+                placeholder="Enter task description"
+              />
               <FieldError>{errors.description?.message}</FieldError>
             </Field>
 
@@ -135,15 +176,27 @@ function CreateTaskDialog({ isOpen, onClose, projectId, members }: CreateTaskDia
                         {field.value ? (
                           <div className="flex items-center gap-2">
                             <Avatar className="h-6 w-6">
-                              <AvatarImage src={members.find((m) => m.user._id === field.value)?.user.avatar?.url} />
+                              <AvatarImage
+                                src={
+                                  members.find(
+                                    (m) => m.user._id === field.value,
+                                  )?.user.avatar?.url
+                                }
+                              />
                               <AvatarFallback>
-                                {members.find((m) => m.user._id === field.value)?.user.fullName?.charAt(0) ||
-                                  members.find((m) => m.user._id === field.value)?.user.username.charAt(0)}
+                                {members
+                                  .find((m) => m.user._id === field.value)
+                                  ?.user.fullName?.charAt(0) ||
+                                  members
+                                    .find((m) => m.user._id === field.value)
+                                    ?.user.username.charAt(0)}
                               </AvatarFallback>
                             </Avatar>
                             <span>
-                              {members.find((m) => m.user._id === field.value)?.user.fullName ||
-                                members.find((m) => m.user._id === field.value)?.user.username}
+                              {members.find((m) => m.user._id === field.value)
+                                ?.user.fullName ||
+                                members.find((m) => m.user._id === field.value)
+                                  ?.user.username}
                             </span>
                           </div>
                         ) : (
@@ -153,15 +206,21 @@ function CreateTaskDialog({ isOpen, onClose, projectId, members }: CreateTaskDia
                     </SelectTrigger>
                     <SelectContent>
                       {members.map((member) => (
-                        <SelectItem key={member.user._id} value={member.user._id}>
+                        <SelectItem
+                          key={member.user._id}
+                          value={member.user._id}
+                        >
                           <div className="flex items-center gap-2">
                             <Avatar className="h-6 w-6">
                               <AvatarImage src={member.user.avatar?.url} />
                               <AvatarFallback>
-                                {member.user.fullName?.charAt(0) || member.user.username.charAt(0)}
+                                {member.user.fullName?.charAt(0) ||
+                                  member.user.username.charAt(0)}
                               </AvatarFallback>
                             </Avatar>
-                            <span>{member.user.fullName || member.user.username}</span>
+                            <span>
+                              {member.user.fullName || member.user.username}
+                            </span>
                           </div>
                         </SelectItem>
                       ))}
@@ -184,11 +243,13 @@ function CreateTaskDialog({ isOpen, onClose, projectId, members }: CreateTaskDia
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(TaskStatusLabels).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>
-                          {label}
-                        </SelectItem>
-                      ))}
+                      {Object.entries(TaskStatusLabels).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ),
+                      )}
                     </SelectContent>
                   </Select>
                 )}
@@ -200,7 +261,12 @@ function CreateTaskDialog({ isOpen, onClose, projectId, members }: CreateTaskDia
             <Field>
               <div className="flex items-center justify-between">
                 <FieldLabel>Subtasks (optional)</FieldLabel>
-                <Button type="button" variant="ghost" size="sm" onClick={() => append({ title: "" })}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => append({ title: "" })}
+                >
                   <ListTodo className="mr-1 h-4 w-4" />
                   Add Subtask
                 </Button>
@@ -213,7 +279,12 @@ function CreateTaskDialog({ isOpen, onClose, projectId, members }: CreateTaskDia
                       placeholder={`Subtask ${index + 1}`}
                       className="flex-1"
                     />
-                    <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => remove(index)}
+                    >
                       <X className="h-4 w-4 text-muted-foreground" />
                     </Button>
                   </div>
@@ -228,15 +299,30 @@ function CreateTaskDialog({ isOpen, onClose, projectId, members }: CreateTaskDia
                 <label className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3 cursor-pointer">
                   <Paperclip className="h-4 w-4" />
                   Add File
-                  <input type="file" multiple onChange={handleFileChange} className="hidden" />
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
                 </label>
               </div>
               {attachments.length > 0 && (
                 <div className="space-y-2 mt-2">
                   {attachments.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg">
-                      <span className="text-sm truncate max-w-50">{file.name}</span>
-                      <Button type="button" variant="ghost" size="icon" onClick={() => removeAttachment(index)}>
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-2 bg-muted/50 rounded-lg"
+                    >
+                      <span className="text-sm truncate max-w-50">
+                        {file.name}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeAttachment(index)}
+                      >
                         <X className="h-4 w-4 text-muted-foreground" />
                       </Button>
                     </div>
@@ -251,7 +337,11 @@ function CreateTaskDialog({ isOpen, onClose, projectId, members }: CreateTaskDia
           <Button type="button" variant="outline" onClick={handleClose}>
             Cancel
           </Button>
-          <Button type="submit" form="create-task-form" disabled={createTask.isPending}>
+          <Button
+            type="submit"
+            form="create-task-form"
+            disabled={createTask.isPending}
+          >
             {createTask.isPending && <Spinner className="mr-2 h-4 w-4" />}
             Create Task
           </Button>

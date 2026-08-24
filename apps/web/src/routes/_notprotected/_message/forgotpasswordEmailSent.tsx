@@ -1,9 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
-export const Route = createFileRoute("/_notprotected/_message/forgotpasswordEmailSent")({
+export const Route = createFileRoute(
+  "/_notprotected/_message/forgotpasswordEmailSent",
+)({
   component: RouteComponent,
 });
 
@@ -15,11 +23,19 @@ function RouteComponent() {
           <MailCheck className="size-8 text-primary" />
         </div>
         <CardTitle className="text-2xl">Check your email</CardTitle>
-        <CardDescription className="text-base">Email has been sent to your email address</CardDescription>
+        <CardDescription className="text-base">
+          Email has been sent to your email address
+        </CardDescription>
       </CardHeader>
       <CardContent className="text-center space-y-4">
-        <p className="text-sm text-muted-foreground">Click the link in the email to change your password.</p>
-        <Button variant="outline" className="w-full" onClick={() => window.open("https://mail.google.com", "_blank")}>
+        <p className="text-sm text-muted-foreground">
+          Click the link in the email to change your password.
+        </p>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => window.open("https://mail.google.com", "_blank")}
+        >
           Open Email
         </Button>
         <p className="text-xs text-muted-foreground pt-2">

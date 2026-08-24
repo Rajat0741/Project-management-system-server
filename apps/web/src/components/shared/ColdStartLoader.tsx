@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { serverHealthQueryOptions } from "@/hooks/useServerHealth";
 import { Spinner } from "@/components/ui/spinner";
+import { serverHealthQueryOptions } from "@/hooks/useServerHealth";
 
 export function ColdStartLoader({ children }: { children: React.ReactNode }) {
   const { isLoading } = useQuery(serverHealthQueryOptions());

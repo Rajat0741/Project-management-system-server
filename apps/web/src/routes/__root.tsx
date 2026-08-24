@@ -1,13 +1,17 @@
-import { createRootRouteWithContext, Outlet, useLocation } from "@tanstack/react-router";
+import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
+import {
+  createRootRouteWithContext,
+  Outlet,
+  useLocation,
+} from "@tanstack/react-router";
 import { ThemeProvider } from "next-themes";
+import { ColdStartLoader } from "@/components/shared/ColdStartLoader";
+import ErrorPage from "@/components/shared/ErrorPage";
+import Header from "@/components/shared/Header";
+import NotFoundPage from "@/components/shared/NotFoundPage";
 import { Toaster } from "@/components/ui/sonner";
 import type { AuthState } from "@/types";
-import type { QueryClient } from "@tanstack/react-query";
-import Header from "@/components/shared/Header";
-import ErrorPage from "@/components/shared/ErrorPage";
-import NotFoundPage from "@/components/shared/NotFoundPage";
-import { ColdStartLoader } from "@/components/shared/ColdStartLoader";
 
 // Extend AuthState to include queryClient
 interface RouterContext extends AuthState {
@@ -45,9 +49,9 @@ const RootLayout = () => {
               <Outlet />
             </div>
           ) : (
-              <ColdStartLoader>
-                <Outlet />
-              </ColdStartLoader>
+            <ColdStartLoader>
+              <Outlet />
+            </ColdStartLoader>
           )}
           <Toaster />
         </div>

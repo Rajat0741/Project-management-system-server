@@ -1,7 +1,13 @@
 import { useRouter } from "@tanstack/react-router";
+import { ArrowLeft, FileQuestion, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileQuestion, ArrowLeft, Home } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function NotFoundPage() {
   const router = useRouter();
@@ -27,10 +33,7 @@ export default function NotFoundPage() {
             <ArrowLeft className="size-4" data-icon="inline-start" />
             Go Back
           </Button>
-          <Button
-            size="sm"
-            onClick={() => router.navigate({ to: "/" })}
-          >
+          <Button size="sm" onClick={() => router.navigate({ to: "/" })}>
             <Home className="size-4" data-icon="inline-start" />
             Home
           </Button>

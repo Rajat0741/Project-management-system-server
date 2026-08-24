@@ -2,13 +2,13 @@ import { Project } from "../../models/project.models.js";
 import ApiError from "../../utils/api-errors.js";
 
 const ensureProjectExists = async (projectId: string) => {
-    const project = await Project.findById(projectId);
+  const project = await Project.findById(projectId);
 
-    if (!project) {
-        throw new ApiError(404, "Project not found");
-    }
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
 
-    return project;
+  return project;
 };
 
 export { ensureProjectExists };

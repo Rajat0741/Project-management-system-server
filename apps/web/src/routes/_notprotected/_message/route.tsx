@@ -6,8 +6,8 @@ export const Route = createFileRoute("/_notprotected/_message")({
 
 function RouteComponent() {
   return (
-    <div className="max-w-11/12" >
+    <div className="max-w-11/12">
       <Outlet />
-    </div> 
+    </div>
   );
 }

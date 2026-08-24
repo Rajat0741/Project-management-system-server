@@ -1,17 +1,6 @@
-import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  CreateProjectSchema,
-  AddMemberSchema,
-  type CreateProjectData,
-  type AddMemberData,
-} from "@/schemas/project.schema";
-import { useUpdateProject, useAddProjectMember, useDeleteProject } from "@/hooks/useProjects";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,9 +12,42 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  useAddProjectMember,
+  useDeleteProject,
+  useUpdateProject,
+} from "@/hooks/useProjects";
+import {
+  type AddMemberData,
+  AddMemberSchema,
+  type CreateProjectData,
+  CreateProjectSchema,
+} from "@/schemas/project.schema";
 import type { Project } from "@/types";
-import { toast } from "sonner";
 
 interface ProjectSettingsProps {
   project: Project;
@@ -36,7 +58,10 @@ export function ProjectSettings({ project }: ProjectSettingsProps) {
     <div className="space-y-6">
       <EditProjectForm project={project} />
       <AddMemberForm projectId={project._id} />
-      <DeleteProjectSection projectId={project._id} projectName={project.name} />
+      <DeleteProjectSection
+        projectId={project._id}
+        projectName={project.name}
+      />
     </div>
   );
 }
@@ -71,7 +96,11 @@ function EditProjectForm({ project }: { project: Project }) {
         <CardDescription>Update the project's details</CardDescription>
       </CardHeader>
       <CardContent>
-        <form id="edit-project-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form
+          id="edit-project-form"
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
           <FieldGroup className="space-y-4">
             <Field>
               <FieldLabel>Project Name</FieldLabel>
@@ -80,14 +109,21 @@ function EditProjectForm({ project }: { project: Project }) {
             </Field>
             <Field>
               <FieldLabel>Description</FieldLabel>
-              <Input {...register("description")} placeholder="Enter description" />
+              <Input
+                {...register("description")}
+                placeholder="Enter description"
+              />
               <FieldError>{errors.description?.message}</FieldError>
             </Field>
           </FieldGroup>
         </form>
       </CardContent>
       <CardFooter className="border-t px-6 py-4 flex justify-end">
-        <Button type="submit" form="edit-project-form" disabled={updateProject.isPending}>
+        <Button
+          type="submit"
+          form="edit-project-form"
+          disabled={updateProject.isPending}
+        >
           {updateProject.isPending && <Spinner className="mr-2 h-4 w-4" />}
           Save Changes
         </Button>
@@ -147,7 +183,10 @@ function AddMemberForm({ projectId }: { projectId: string }) {
                 control={control}
                 name="role"
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select role" />
                     </SelectTrigger>
@@ -171,7 +210,13 @@ function AddMemberForm({ projectId }: { projectId: string }) {
   );
 }
 
-function DeleteProjectSection({ projectId, projectName }: { projectId: string; projectName: string }) {
+function DeleteProjectSection({
+  projectId,
+  projectName,
+}: {
+  projectId: string;
+  projectName: string;
+}) {
   const deleteProject = useDeleteProject();
 
   const handleDelete = () => {
@@ -186,9 +231,12 @@ function DeleteProjectSection({ projectId, projectName }: { projectId: string; p
       <CardContent className="flex items-start justify-between gap-4">
         <div className="flex-1">
           <CardDescription>
-            Permanently delete this project and all of its content. This action cannot be undone.
+            Permanently delete this project and all of its content. This action
+            cannot be undone.
           </CardDescription>
-          <div className="text-sm text-muted-foreground mt-2">Reference ID: {projectId}</div>
+          <div className="text-sm text-muted-foreground mt-2">
+            Reference ID: {projectId}
+          </div>
         </div>
         <AlertDialog>
           <AlertDialogTrigger
@@ -202,9 +250,13 @@ function DeleteProjectSection({ projectId, projectName }: { projectId: string; p
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the project
-                <span className="font-semibold text-foreground"> {projectName}</span> and remove all data associated
-                with it.
+                This action cannot be undone. This will permanently delete the
+                project
+                <span className="font-semibold text-foreground">
+                  {" "}
+                  {projectName}
+                </span>{" "}
+                and remove all data associated with it.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

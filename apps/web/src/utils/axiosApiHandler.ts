@@ -1,6 +1,6 @@
 import { isAxiosError } from "axios";
-import type { ErrorResponse } from "@/types";
 import { toast } from "sonner";
+import type { ErrorResponse } from "@/types";
 
 // Centered error handler for API and local errors
 
@@ -12,7 +12,8 @@ export const axiosErrorHandler = (error: unknown) => {
       return;
     }
     const serverError = error.response?.data as ErrorResponse | undefined;
-    const errorMessage = serverError?.message || error.message || "Server connection failed";
+    const errorMessage =
+      serverError?.message || error.message || "Server connection failed";
     toast.error(errorMessage);
   } else if (error instanceof Error) {
     toast.error(error.message);

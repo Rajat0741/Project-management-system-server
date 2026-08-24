@@ -1,21 +1,21 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { SparklesCore } from "@/components/ui/sparkles";
-import { FlipWords } from "@/components/ui/flip-words";
-import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
-import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
-import { WobbleCard } from "@/components/ui/wobble-card";
-import { motion } from "motion/react";
 import {
-  FolderKanban,
-  ListChecks,
-  Users,
-  ShieldCheck,
-  Paperclip,
-  LayoutDashboard,
   ArrowRight,
   CheckCircle2,
+  FolderKanban,
+  LayoutDashboard,
+  ListChecks,
+  Paperclip,
+  ShieldCheck,
+  Users,
 } from "lucide-react";
+import { motion } from "motion/react";
+import { FlipWords } from "@/components/ui/flip-words";
+import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 import { Separator } from "@/components/ui/separator";
+import { SparklesCore } from "@/components/ui/sparkles";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
+import { WobbleCard } from "@/components/ui/wobble-card";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -194,7 +194,10 @@ function Index() {
               </p>
             </div>
             <div className="absolute -right-4 lg:-right-[10%] -bottom-10 hidden md:block">
-              <FolderKanban className="size-48 text-white/5" strokeWidth={0.5} />
+              <FolderKanban
+                className="size-48 text-white/5"
+                strokeWidth={0.5}
+              />
             </div>
           </WobbleCard>
 
@@ -255,10 +258,7 @@ function Index() {
               </p>
             </div>
             <div className="absolute -right-4 lg:-right-[10%] -bottom-10 hidden md:block">
-              <ShieldCheck
-                className="size-48 text-white/5"
-                strokeWidth={0.5}
-              />
+              <ShieldCheck className="size-48 text-white/5" strokeWidth={0.5} />
             </div>
           </WobbleCard>
         </div>

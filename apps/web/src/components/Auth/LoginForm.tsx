@@ -1,13 +1,25 @@
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldError } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { loginSchema, type LoginFormData } from "@/schemas/auth.schema";
 import { Link } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { useLogin } from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
+import { type LoginFormData, loginSchema } from "@/schemas/auth.schema";
 
 export function LoginForm() {
   const {
@@ -37,30 +49,56 @@ export function LoginForm() {
             <FieldGroup>
               <Field data-invalid={!!errors.email}>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input id="email" type="email" placeholder="m@example.com" required className="border-foreground/30" {...register("email")} />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  required
+                  className="border-foreground/30"
+                  {...register("email")}
+                />
                 <FieldError errors={errors.email ? [errors.email] : []} />
               </Field>
               <Field data-invalid={!!errors.password}>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <Link to="/forgotPasswordRequest" className="ml-auto text-sm underline-offset-4 hover:underline">
+                  <Link
+                    to="/forgotPasswordRequest"
+                    className="ml-auto text-sm underline-offset-4 hover:underline"
+                  >
                     Forgot your password?
                   </Link>
                 </div>
-                <Input id="password" type="password" required className="border-foreground/30" {...register("password")} />
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  className="border-foreground/30"
+                  {...register("password")}
+                />
                 <FieldError errors={errors.password ? [errors.password] : []} />
               </Field>
               <Field>
-                <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={loginMutation.isPending}
+                >
                   {loginMutation.isPending ? "Logging in..." : "Login"}
                 </Button>
                 <FieldDescription className="text-center">
                   Don't have an account?{" "}
-                  <Link to="/register" className="cursor-pointer text-primary hover:underline">
+                  <Link
+                    to="/register"
+                    className="cursor-pointer text-primary hover:underline"
+                  >
                     Sign up
                   </Link>
                   <br />
-                  <Link to="/resendVerificationToken" className="cursor-pointer text-primary hover:underline">
+                  <Link
+                    to="/resendVerificationToken"
+                    className="cursor-pointer text-primary hover:underline"
+                  >
                     Resend verification email
                   </Link>
                 </FieldDescription>

@@ -1,5 +1,5 @@
-import { useRef } from "react";
 import { Camera, Loader2 } from "lucide-react";
+import { useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUpdateProfilePicture } from "@/hooks/useAuth";
 
@@ -9,7 +9,11 @@ interface ProfileAvatarProps {
   username: string;
 }
 
-export function ProfileAvatar({ avatarUrl, fullName, username }: ProfileAvatarProps) {
+export function ProfileAvatar({
+  avatarUrl,
+  fullName,
+  username,
+}: ProfileAvatarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const updateProfilePicture = useUpdateProfilePicture();
 
@@ -66,11 +70,19 @@ export function ProfileAvatar({ avatarUrl, fullName, username }: ProfileAvatarPr
           )}
         </button>
 
-        <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
       </div>
 
       <div className="text-center">
-        <h2 className="text-xl font-semibold text-foreground">{fullName || username}</h2>
+        <h2 className="text-xl font-semibold text-foreground">
+          {fullName || username}
+        </h2>
         <p className="text-sm text-muted-foreground">@{username}</p>
       </div>
     </div>

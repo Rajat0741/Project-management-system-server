@@ -1,13 +1,13 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { tasksQueryOptions } from "@/hooks/useTasks";
+import { cn } from "@/lib/utils";
 import { TaskStatusLabels } from "@/schemas/task.schema";
+import type { ProjectMemberWithDetails, TaskStatus } from "@/types";
 import { CreateTaskButton } from "./CreateTaskButton";
 import { TaskItem } from "./TaskItem";
-import type { TaskStatus, ProjectMemberWithDetails } from "@/types";
-import { Spinner } from "@/components/ui/spinner";
-import { cn } from "@/lib/utils";
 
 interface ProjectTasksProps {
   projectId: string;
@@ -15,16 +15,28 @@ interface ProjectTasksProps {
   isAdmin: boolean;
 }
 
-export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps) {
-  const { data: tasks, isLoading, isError } = useQuery(tasksQueryOptions(projectId));
+export function ProjectTasks({
+  projectId,
+  members,
+  isAdmin,
+}: ProjectTasksProps) {
+  const {
+    data: tasks,
+    isLoading,
+    isError,
+  } = useQuery(tasksQueryOptions(projectId));
   const [statusFilter, setStatusFilter] = useState<TaskStatus | "all">("all");
 
   const allTasks = tasks ?? [];
-  const filteredTasks = statusFilter === "all" ? allTasks : allTasks.filter((task) => task.status === statusFilter);
+  const filteredTasks =
+    statusFilter === "all"
+      ? allTasks
+      : allTasks.filter((task) => task.status === statusFilter);
   const statusCounts = {
     all: allTasks.length,
     todo: allTasks.filter((task) => task.status === "todo").length,
-    in_progress: allTasks.filter((task) => task.status === "in_progress").length,
+    in_progress: allTasks.filter((task) => task.status === "in_progress")
+      .length,
     done: allTasks.filter((task) => task.status === "done").length,
   };
 
@@ -42,7 +54,9 @@ export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps)
   if (isError) {
     return (
       <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/60 py-12 text-center dark:border-foreground/20 dark:bg-transparent">
-        <p className="text-muted-foreground text-lg">Error loading tasks. Please try again.</p>
+        <p className="text-muted-foreground text-lg">
+          Error loading tasks. Please try again.
+        </p>
       </div>
     );
   }
@@ -57,7 +71,9 @@ export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps)
             {completedCount} of {totalCount} completed
           </p>
         </div>
-        {isAdmin && <CreateTaskButton projectId={projectId} members={members} />}
+        {isAdmin && (
+          <CreateTaskButton projectId={projectId} members={members} />
+        )}
       </div>
 
       {/* Progress bar */}
@@ -66,7 +82,9 @@ export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps)
           <motion.div
             className="h-full rounded-full bg-foreground/70"
             initial={{ width: 0 }}
-            animate={{ width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%` }}
+            animate={{
+              width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%`,
+            }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           />
         </div>
@@ -88,7 +106,9 @@ export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps)
               onClick={() => setStatusFilter(status)}
               className={cn(
                 "relative px-3 py-2 text-sm font-medium transition-colors",
-                isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                isActive
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               {labels[status]}
@@ -120,7 +140,9 @@ export function ProjectTasks({ projectId, members, isAdmin }: ProjectTasksProps)
               ? `No tasks with status "${TaskStatusLabels[statusFilter as TaskStatus] || statusFilter}"`
               : "No tasks yet"}
           </p>
-          <p className="meta-text mt-1">Create your first task to get started</p>
+          <p className="meta-text mt-1">
+            Create your first task to get started
+          </p>
         </div>
       ) : (
         <div className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white dark:divide-foreground/10 dark:border-foreground/15 dark:bg-transparent">

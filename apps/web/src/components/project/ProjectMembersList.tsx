@@ -1,13 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import type { ProjectMemberWithDetails } from "@/types";
-import { projectMembersFetchingQueryOptions } from "@/hooks/useProjects";
+import { format } from "date-fns";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MemberActions } from "./MemberActions";
+import { projectMembersFetchingQueryOptions } from "@/hooks/useProjects";
 import { useUserStore } from "@/store/userData";
+import type { ProjectMemberWithDetails } from "@/types";
+import { MemberActions } from "./MemberActions";
 
 interface MembersListProps {
   members: ProjectMemberWithDetails[] | undefined;
@@ -22,7 +28,9 @@ interface MemberListItemProps {
 }
 
 export function ProjectMembers({ projectId }: ProjectMembersProps) {
-  const { data: members, isLoading } = useQuery(projectMembersFetchingQueryOptions(projectId));
+  const { data: members, isLoading } = useQuery(
+    projectMembersFetchingQueryOptions(projectId),
+  );
   const currentUser = useUserStore((state) => state.userData);
 
   if (isLoading) {
@@ -49,16 +57,26 @@ export function ProjectMembers({ projectId }: ProjectMembersProps) {
     <Card>
       <CardHeader>
         <CardTitle>Team Members</CardTitle>
-        <CardDescription>Manage who has access to this project.</CardDescription>
+        <CardDescription>
+          Manage who has access to this project.
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <MembersList members={sortedMembers} projectId={projectId} isCurrentUserAdmin={isCurrentUserAdmin ?? false} />
+        <MembersList
+          members={sortedMembers}
+          projectId={projectId}
+          isCurrentUserAdmin={isCurrentUserAdmin ?? false}
+        />
       </CardContent>
     </Card>
   );
 }
 
-function MembersList({ members, projectId, isCurrentUserAdmin }: MembersListProps) {
+function MembersList({
+  members,
+  projectId,
+  isCurrentUserAdmin,
+}: MembersListProps) {
   return (
     <div className="space-y-1">
       {members?.map((member) => (
@@ -71,25 +89,39 @@ function MembersList({ members, projectId, isCurrentUserAdmin }: MembersListProp
       ))}
 
       {members && members.length === 0 && (
-        <div className="text-center py-12 text-muted-foreground">No members found.</div>
+        <div className="text-center py-12 text-muted-foreground">
+          No members found.
+        </div>
       )}
     </div>
   );
 }
 
-function MemberListItem({ member, projectId, isCurrentUserAdmin }: MemberListItemProps) {
+function MemberListItem({
+  member,
+  projectId,
+  isCurrentUserAdmin,
+}: MemberListItemProps) {
   return (
     <div className="flex items-center justify-between p-3 rounded-md hover:bg-muted/50 transition-colors group">
       <div className="flex items-center gap-3 min-w-0">
         <Avatar className="h-9 w-9 border">
-          <AvatarImage src={member.user.avatar?.url} alt={member.user.username} />
+          <AvatarImage
+            src={member.user.avatar?.url}
+            alt={member.user.username}
+          />
         </Avatar>
 
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2">
-            <span className="font-medium text-sm truncate">{member.user.fullName}</span>
+            <span className="font-medium text-sm truncate">
+              {member.user.fullName}
+            </span>
             {member.role === "admin" && (
-              <Badge variant="secondary" className="text-[10px] h-5 px-1.5 font-normal">
+              <Badge
+                variant="secondary"
+                className="text-[10px] h-5 px-1.5 font-normal"
+              >
                 Admin
               </Badge>
             )}
@@ -106,7 +138,11 @@ function MemberListItem({ member, projectId, isCurrentUserAdmin }: MemberListIte
         <span className="text-xs text-muted-foreground hidden md:block">
           Joined {format(new Date(member.createdAt), "MMM d, yyyy")}
         </span>
-        <MemberActions member={member} projectId={projectId} isCurrentUserAdmin={isCurrentUserAdmin} />
+        <MemberActions
+          member={member}
+          projectId={projectId}
+          isCurrentUserAdmin={isCurrentUserAdmin}
+        />
       </div>
     </div>
   );

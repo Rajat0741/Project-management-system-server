@@ -1,5 +1,5 @@
+import type React from "react";
 import { cn } from "@/lib/utils";
-import React from "react";
 
 interface DotBackgroundProps {
   children?: React.ReactNode;
@@ -7,13 +7,22 @@ interface DotBackgroundProps {
   showBackground?: boolean;
 }
 
-export function DotBackground({ children, className, showBackground = true }: DotBackgroundProps) {
+export function DotBackground({
+  children,
+  className,
+  showBackground = true,
+}: DotBackgroundProps) {
   if (!showBackground) {
     return <div className={cn("w-full h-full", className)}>{children}</div>;
   }
 
   return (
-    <div className={cn("relative flex h-full w-full bg-neutral-200 dark:bg-neutral-950", className)}>
+    <div
+      className={cn(
+        "relative flex h-full w-full bg-neutral-200 dark:bg-neutral-950",
+        className,
+      )}
+    >
       <div
         className={cn(
           "absolute inset-0 pointer-events-none",

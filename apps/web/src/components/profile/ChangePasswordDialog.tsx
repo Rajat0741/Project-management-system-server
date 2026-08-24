@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, KeyRound, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,11 +13,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
 import { useChangePassword } from "@/hooks/useAuth";
-import { changePasswordSchema } from "@/schemas/auth.schema";
 import type { ChangePasswordFormData } from "@/schemas/auth.schema";
+import { changePasswordSchema } from "@/schemas/auth.schema";
 
 export function ChangePasswordDialog() {
   const [open, setOpen] = useState(false);
@@ -65,7 +70,8 @@ export function ChangePasswordDialog() {
         <DialogHeader>
           <DialogTitle>Change Password</DialogTitle>
           <DialogDescription>
-            Enter your current password and a new password to update your credentials.
+            Enter your current password and a new password to update your
+            credentials.
           </DialogDescription>
         </DialogHeader>
 
@@ -85,7 +91,11 @@ export function ChangePasswordDialog() {
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {showCurrentPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  {showCurrentPassword ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
                 </button>
               </div>
               <FieldError>{errors.currentPassword?.message}</FieldError>
@@ -105,7 +115,11 @@ export function ChangePasswordDialog() {
                   onClick={() => setShowNewPassword(!showNewPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {showNewPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  {showNewPassword ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
                 </button>
               </div>
               <FieldError>{errors.newPassword?.message}</FieldError>
@@ -114,11 +128,21 @@ export function ChangePasswordDialog() {
         </form>
 
         <DialogFooter className="gap-2">
-          <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+          >
             Cancel
           </Button>
-          <Button type="submit" form="change-password-form" disabled={changePassword.isPending}>
-            {changePassword.isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
+          <Button
+            type="submit"
+            form="change-password-form"
+            disabled={changePassword.isPending}
+          >
+            {changePassword.isPending && (
+              <Loader2 className="mr-2 size-4 animate-spin" />
+            )}
             Update Password
           </Button>
         </DialogFooter>

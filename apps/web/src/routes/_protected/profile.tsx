@@ -1,10 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Mail, User, Calendar, Shield } from "lucide-react";
-import { useUserStore } from "@/store/userData";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
+import { Calendar, Mail, Shield, User } from "lucide-react";
 import { ChangePasswordDialog } from "@/components/profile/ChangePasswordDialog";
+import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { useUserStore } from "@/store/userData";
 
 export const Route = createFileRoute("/_protected/profile")({
   component: ProfilePage,
@@ -35,7 +41,11 @@ function ProfilePage() {
         {/* Profile Header */}
         <Card className="border-none shadow-lg">
           <CardContent className="pt-8 pb-6">
-            <ProfileAvatar avatarUrl={userData.avatar?.url} fullName={userData.fullName} username={userData.username} />
+            <ProfileAvatar
+              avatarUrl={userData.avatar?.url}
+              fullName={userData.fullName}
+              username={userData.username}
+            />
           </CardContent>
         </Card>
 
@@ -49,7 +59,11 @@ function ProfilePage() {
             <CardDescription>Your personal account details</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <InfoItem icon={<User className="size-4" />} label="Full Name" value={userData.fullName || "Not set"} />
+            <InfoItem
+              icon={<User className="size-4" />}
+              label="Full Name"
+              value={userData.fullName || "Not set"}
+            />
             <Separator />
             <InfoItem
               icon={<Mail className="size-4" />}
@@ -59,7 +73,11 @@ function ProfilePage() {
               badgeVariant={userData.isEmailVerified ? "success" : "warning"}
             />
             <Separator />
-            <InfoItem icon={<User className="size-4" />} label="Username" value={`@${userData.username}`} />
+            <InfoItem
+              icon={<User className="size-4" />}
+              label="Username"
+              value={`@${userData.username}`}
+            />
             <Separator />
             <InfoItem
               icon={<Calendar className="size-4" />}

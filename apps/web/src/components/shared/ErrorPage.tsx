@@ -1,8 +1,20 @@
-import { isAxiosError } from "axios";
 import { useRouter } from "@tanstack/react-router";
+import { isAxiosError } from "axios";
+import {
+  AlertCircle,
+  ArrowLeft,
+  RefreshCw,
+  ServerCrash,
+  WifiOff,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, WifiOff, ServerCrash, RefreshCw, ArrowLeft } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface ErrorPageProps {
   error: unknown;

@@ -6,19 +6,17 @@ import type { IUser } from "../models/user.models.js";
  * removed from the user object in the middleware.
  */
 interface AuthenticatedUser extends IUser {
-    role?: string;
+  role?: string;
 }
 
 declare global {
-    namespace Express {
-        interface Request {
-            /**
-             * The authenticated user object, populated by the verifyJWT middleware.
-             * Some properties from IUser (e.g., password, tokens) are excluded.
-             */
-            user: AuthenticatedUser;
-        }
+  namespace Express {
+    interface Request {
+      /**
+       * The authenticated user object, populated by the verifyJWT middleware.
+       * Some properties from IUser (e.g., password, tokens) are excluded.
+       */
+      user: AuthenticatedUser;
     }
+  }
 }
-
-export {};

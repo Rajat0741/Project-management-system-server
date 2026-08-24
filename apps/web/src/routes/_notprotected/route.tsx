@@ -14,10 +14,10 @@ export const Route = createFileRoute("/_notprotected")({
 
 function RouteComponent() {
   return (
-      <DotBackground>
-    <div className="flex flex-col w-full h-full items-center justify-center min-h-screen">
+    <DotBackground>
+      <div className="flex flex-col w-full h-full items-center justify-center min-h-screen">
         <Outlet />
-    </div>
-      </DotBackground>
+      </div>
+    </DotBackground>
   );
 }

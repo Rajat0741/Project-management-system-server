@@ -1,17 +1,32 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Paperclip, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Pencil, Plus, Paperclip, Trash2 } from "lucide-react";
-import { UpdateTaskSchema, type UpdateTaskData } from "@/schemas/task.schema";
-import { useUpdateTask, useCreateSubtask, useAddAttachment, useDeleteAttachment } from "@/hooks/useTasks";
-import type { Task } from "@/types";
-
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  useAddAttachment,
+  useCreateSubtask,
+  useDeleteAttachment,
+  useUpdateTask,
+} from "@/hooks/useTasks";
+import { type UpdateTaskData, UpdateTaskSchema } from "@/schemas/task.schema";
+import type { Task } from "@/types";
 
 interface EditTaskDialogProps {
   task: Task;
@@ -20,7 +35,12 @@ interface EditTaskDialogProps {
   onClose: () => void;
 }
 
-export function EditTaskDialog({ task, projectId, isOpen, onClose }: EditTaskDialogProps) {
+export function EditTaskDialog({
+  task,
+  projectId,
+  isOpen,
+  onClose,
+}: EditTaskDialogProps) {
   const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
   const [newAttachment, setNewAttachment] = useState<File | null>(null);
 
@@ -77,7 +97,11 @@ export function EditTaskDialog({ task, projectId, isOpen, onClose }: EditTaskDia
           <DialogTitle>Edit Task</DialogTitle>
         </DialogHeader>
 
-        <form id="edit-task-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form
+          id="edit-task-form"
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
           <FieldGroup className="space-y-4">
             <Field>
               <FieldLabel>Title</FieldLabel>
@@ -87,7 +111,10 @@ export function EditTaskDialog({ task, projectId, isOpen, onClose }: EditTaskDia
 
             <Field>
               <FieldLabel>Description</FieldLabel>
-              <Textarea {...register("description")} placeholder="Task description" />
+              <Textarea
+                {...register("description")}
+                placeholder="Task description"
+              />
               <FieldError>{errors.description?.message}</FieldError>
             </Field>
           </FieldGroup>
@@ -101,7 +128,12 @@ export function EditTaskDialog({ task, projectId, isOpen, onClose }: EditTaskDia
               value={newSubtaskTitle}
               onChange={(e) => setNewSubtaskTitle(e.target.value)}
               placeholder="New subtask title"
-              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddSubtask())}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAddSubtask();
+                }
+              }}
             />
             <Button
               type="button"
@@ -110,7 +142,11 @@ export function EditTaskDialog({ task, projectId, isOpen, onClose }: EditTaskDia
               onClick={handleAddSubtask}
               disabled={createSubtask.isPending || !newSubtaskTitle.trim()}
             >
-              {createSubtask.isPending ? <Spinner className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+              {createSubtask.isPending ? (
+                <Spinner className="h-4 w-4" />
+              ) : (
+                <Plus className="h-4 w-4" />
+              )}
             </Button>
           </div>
         </div>
@@ -123,9 +159,14 @@ export function EditTaskDialog({ task, projectId, isOpen, onClose }: EditTaskDia
           {task.attachments.length > 0 && (
             <div className="space-y-1">
               {task.attachments.map((att) => (
-                <div key={att.fileId} className="flex items-center justify-between p-2 bg-background rounded text-sm">
+                <div
+                  key={att.fileId}
+                  className="flex items-center justify-between p-2 bg-background rounded text-sm"
+                >
                   <span className="truncate max-w-50">
-                    {decodeURIComponent(new URL(att.url).pathname.split("/").pop() || "file")}
+                    {decodeURIComponent(
+                      new URL(att.url).pathname.split("/").pop() || "file",
+                    )}
                   </span>
                   <Button
                     type="button"
@@ -156,7 +197,11 @@ export function EditTaskDialog({ task, projectId, isOpen, onClose }: EditTaskDia
               onClick={handleAddAttachment}
               disabled={addAttachment.isPending || !newAttachment}
             >
-              {addAttachment.isPending ? <Spinner className="h-4 w-4" /> : <Paperclip className="h-4 w-4" />}
+              {addAttachment.isPending ? (
+                <Spinner className="h-4 w-4" />
+              ) : (
+                <Paperclip className="h-4 w-4" />
+              )}
             </Button>
           </div>
         </div>
@@ -165,7 +210,11 @@ export function EditTaskDialog({ task, projectId, isOpen, onClose }: EditTaskDia
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="submit" form="edit-task-form" disabled={updateTask.isPending}>
+          <Button
+            type="submit"
+            form="edit-task-form"
+            disabled={updateTask.isPending}
+          >
             {updateTask.isPending && <Spinner className="mr-2 h-4 w-4" />}
             Save Changes
           </Button>
@@ -197,7 +246,12 @@ export function EditTaskButton({ task, projectId }: EditTaskButtonProps) {
       >
         <Pencil className="h-4 w-4" />
       </Button>
-      <EditTaskDialog task={task} projectId={projectId} isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <EditTaskDialog
+        task={task}
+        projectId={projectId}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      />
     </>
   );
 }

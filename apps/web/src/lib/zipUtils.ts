@@ -1,12 +1,15 @@
-import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import JSZip from "jszip";
 
 /**
  * Downloads multiple files as a single zip archive.
  * @param attachments Array of objects containing url and optional filename.
  * @param zipFileName The name of the zip file to download (without extension).
  */
-export async function downloadAttachmentsAsZip(attachments: { url: string; filename?: string }[], zipFileName: string) {
+export async function downloadAttachmentsAsZip(
+  attachments: { url: string; filename?: string }[],
+  zipFileName: string,
+) {
   const zip = new JSZip();
   const folder = zip.folder("attachments");
 
@@ -34,7 +37,9 @@ export async function downloadAttachmentsAsZip(attachments: { url: string; filen
       if (!filename) {
         try {
           // Try to extract from URL
-          filename = decodeURIComponent(new URL(attachment.url).pathname.split("/").pop() || "file");
+          filename = decodeURIComponent(
+            new URL(attachment.url).pathname.split("/").pop() || "file",
+          );
         } catch {
           filename = "file";
         }

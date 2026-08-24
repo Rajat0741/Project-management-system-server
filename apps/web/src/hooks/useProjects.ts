@@ -1,10 +1,17 @@
-import type { Project, ProjectListItem, ProjectMemberWithDetails, SuccessResponse } from "@/types";
-import type { CreateProjectData, AddMemberData } from "@/schemas/project.schema";
-import apiClient from "@/lib/axiosApi";
-import { queryOptions } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
-import { queryClient, router } from "@/router";
+import { queryOptions, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import apiClient from "@/lib/axiosApi";
+import { queryClient, router } from "@/router";
+import type {
+  AddMemberData,
+  CreateProjectData,
+} from "@/schemas/project.schema";
+import type {
+  Project,
+  ProjectListItem,
+  ProjectMemberWithDetails,
+  SuccessResponse,
+} from "@/types";
 
 // Creating New Project
 export const useCreateProject = () => {
@@ -54,7 +61,9 @@ export const useAddProjectMember = (projectId: string) => {
     },
     onSuccess: () => {
       toast.success("Member added successfully!");
-      queryClient.invalidateQueries({ queryKey: ["projectMembers", projectId] });
+      queryClient.invalidateQueries({
+        queryKey: ["projectMembers", projectId],
+      });
       queryClient.invalidateQueries({ queryKey: ["projects", projectId] });
       router.invalidate();
     },
@@ -65,11 +74,15 @@ export const useAddProjectMember = (projectId: string) => {
 export const useMakeProjectMemberAdmin = (projectId: string) => {
   return useMutation({
     mutationFn: async (memberId: string) => {
-      await apiClient.put(`/projects/${projectId}/members/${memberId}`, { role: "admin" });
+      await apiClient.put(`/projects/${projectId}/members/${memberId}`, {
+        role: "admin",
+      });
     },
     onSuccess: () => {
       toast.success("Role has been changed to admin successfully!");
-      queryClient.invalidateQueries({ queryKey: ["projectMembers", projectId] });
+      queryClient.invalidateQueries({
+        queryKey: ["projectMembers", projectId],
+      });
       queryClient.invalidateQueries({ queryKey: ["projects", projectId] });
       router.invalidate();
     },
@@ -84,7 +97,9 @@ export const useRemoveProjectMember = (projectId: string) => {
     },
     onSuccess: () => {
       toast.success("Member removed successfully!");
-      queryClient.invalidateQueries({ queryKey: ["projectMembers", projectId] });
+      queryClient.invalidateQueries({
+        queryKey: ["projectMembers", projectId],
+      });
       queryClient.invalidateQueries({ queryKey: ["projects", projectId] });
       router.invalidate();
     },
@@ -99,7 +114,10 @@ export const useLeaveProject = (projectId: string) => {
     },
     onSuccess: () => {
       router.navigate({ to: "/dashboard" });
-      queryClient.invalidateQueries({ queryKey: ["projects", projectId], exact: true });
+      queryClient.invalidateQueries({
+        queryKey: ["projects", projectId],
+        exact: true,
+      });
       router.invalidate();
     },
   });
@@ -109,7 +127,8 @@ export const useLeaveProject = (projectId: string) => {
 
 // Fetch all projects - used in route loader
 export const fetchProjects = async (): Promise<ProjectListItem[]> => {
-  const response: SuccessResponse<ProjectListItem[]> = await apiClient.get("/projects");
+  const response: SuccessResponse<ProjectListItem[]> =
+    await apiClient.get("/projects");
   return response.data.data;
 };
 
@@ -122,7 +141,9 @@ export const projectLoadingQueryOptions = () =>
 
 // Fetch project by ID
 export const fetchProjectById = async (projectId: string): Promise<Project> => {
-  const response: SuccessResponse<Project> = await apiClient.get(`projects/${projectId}`);
+  const response: SuccessResponse<Project> = await apiClient.get(
+    `projects/${projectId}`,
+  );
   return response.data.data;
 };
 
@@ -134,8 +155,11 @@ export const projectFetchingQueryOptions = (projectId: string) =>
   });
 
 // Fetch project Members by Project ID
-export const fetchProjectMembersById = async (projectId: string): Promise<ProjectMemberWithDetails[]> => {
-  const response: SuccessResponse<ProjectMemberWithDetails[]> = await apiClient.get(`projects/${projectId}/members`);
+export const fetchProjectMembersById = async (
+  projectId: string,
+): Promise<ProjectMemberWithDetails[]> => {
+  const response: SuccessResponse<ProjectMemberWithDetails[]> =
+    await apiClient.get(`projects/${projectId}/members`);
 
   return response.data.data;
 };

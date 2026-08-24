@@ -1,7 +1,7 @@
-import type { ProjectListItem } from "@/types";
-import { Users, Calendar, ChevronRight } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import { Calendar, ChevronRight, Users } from "lucide-react";
 import { motion } from "motion/react";
+import type { ProjectListItem } from "@/types";
 
 interface ProjectRowProps {
   item: ProjectListItem;
@@ -12,11 +12,14 @@ export function ProjectRow({ item, index }: ProjectRowProps) {
   const { projects: project, role } = item;
   const navigate = useNavigate();
 
-  const formattedDate = new Date(project.createdAt).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const formattedDate = new Date(project.createdAt).toLocaleDateString(
+    "en-US",
+    {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    },
+  );
 
   return (
     <motion.div
@@ -27,8 +30,12 @@ export function ProjectRow({ item, index }: ProjectRowProps) {
       onClick={() => navigate({ to: `/project/${project._id}` })}
     >
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-foreground">{project.name}</p>
-        <p className="meta-text mt-0.5 truncate">{project.description || "No description provided"}</p>
+        <p className="truncate text-sm font-medium text-foreground">
+          {project.name}
+        </p>
+        <p className="meta-text mt-0.5 truncate">
+          {project.description || "No description provided"}
+        </p>
       </div>
 
       <div className="hidden shrink-0 items-center gap-3 sm:flex">

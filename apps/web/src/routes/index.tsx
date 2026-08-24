@@ -10,6 +10,7 @@ import {
   Users,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { Button } from "@/components/ui/button";
 import { FlipWords } from "@/components/ui/flip-words";
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 import { Separator } from "@/components/ui/separator";
@@ -407,24 +408,30 @@ function Index() {
             Manage projects. Track tasks. Collaborate with your team.
           </p>
           <div className="flex items-center gap-6 mt-2">
-            <button
+            <Button
+              type="button"
+              variant="ghost"
               onClick={() => navigate({ to: "/login" })}
-              className="text-sm text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              className="h-auto px-0 py-1 font-normal text-neutral-400 hover:bg-transparent hover:text-white transition-colors cursor-pointer"
             >
               Dashboard
-            </button>
-            <button
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
               onClick={() => navigate({ to: "/login" })}
-              className="text-sm text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              className="h-auto px-0 py-1 font-normal text-neutral-400 hover:bg-transparent hover:text-white transition-colors cursor-pointer"
             >
               Sign In
-            </button>
-            <button
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
               onClick={() => navigate({ to: "/register" })}
-              className="text-sm text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              className="h-auto px-0 py-1 font-normal text-neutral-400 hover:bg-transparent hover:text-white transition-colors cursor-pointer"
             >
               Sign Up
-            </button>
+            </Button>
           </div>
         </div>
       </footer>

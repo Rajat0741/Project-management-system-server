@@ -8,334 +8,334 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as NotprotectedRouteRouteImport } from './routes/_notprotected/route'
-import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
-import { Route as NotprotectedAuthRouteRouteImport } from './routes/_notprotected/_auth/route'
-import { Route as NotprotectedMessageRouteRouteImport } from './routes/_notprotected/_message/route'
-import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
-import { Route as ProtectedProfileRouteImport } from './routes/_protected/profile'
-import { Route as NotprotectedAuthForgotPasswordRequestRouteImport } from './routes/_notprotected/_auth/forgotPasswordRequest'
-import { Route as NotprotectedAuthLoginRouteImport } from './routes/_notprotected/_auth/login'
-import { Route as NotprotectedAuthRegisterRouteImport } from './routes/_notprotected/_auth/register'
-import { Route as NotprotectedAuthResendVerificationTokenRouteImport } from './routes/_notprotected/_auth/resendVerificationToken'
-import { Route as NotprotectedMessageForgotpasswordEmailSentRouteImport } from './routes/_notprotected/_message/forgotpasswordEmailSent'
-import { Route as NotprotectedMessageVerificationEmailSentRouteImport } from './routes/_notprotected/_message/verificationEmailSent'
-import { Route as ProtectedProjectProjectidRouteImport } from './routes/_protected/project.$projectid'
-import { Route as NotprotectedMessageNewPasswordResetTokenRouteImport } from './routes/_notprotected/_message/newPassword.$resetToken'
-import { Route as NotprotectedMessageVerifyEmailVerificationTokenRouteImport } from './routes/_notprotected/_message/verifyEmail.$verificationToken'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as NotprotectedAuthForgotPasswordRequestRouteImport } from "./routes/_notprotected/_auth/forgotPasswordRequest";
+import { Route as NotprotectedAuthLoginRouteImport } from "./routes/_notprotected/_auth/login";
+import { Route as NotprotectedAuthRegisterRouteImport } from "./routes/_notprotected/_auth/register";
+import { Route as NotprotectedAuthResendVerificationTokenRouteImport } from "./routes/_notprotected/_auth/resendVerificationToken";
+import { Route as NotprotectedAuthRouteRouteImport } from "./routes/_notprotected/_auth/route";
+import { Route as NotprotectedMessageForgotpasswordEmailSentRouteImport } from "./routes/_notprotected/_message/forgotpasswordEmailSent";
+import { Route as NotprotectedMessageNewPasswordResetTokenRouteImport } from "./routes/_notprotected/_message/newPassword.$resetToken";
+import { Route as NotprotectedMessageRouteRouteImport } from "./routes/_notprotected/_message/route";
+import { Route as NotprotectedMessageVerificationEmailSentRouteImport } from "./routes/_notprotected/_message/verificationEmailSent";
+import { Route as NotprotectedMessageVerifyEmailVerificationTokenRouteImport } from "./routes/_notprotected/_message/verifyEmail.$verificationToken";
+import { Route as NotprotectedRouteRouteImport } from "./routes/_notprotected/route";
+import { Route as ProtectedDashboardRouteImport } from "./routes/_protected/dashboard";
+import { Route as ProtectedProfileRouteImport } from "./routes/_protected/profile";
+import { Route as ProtectedProjectProjectidRouteImport } from "./routes/_protected/project.$projectid";
+import { Route as ProtectedRouteRouteImport } from "./routes/_protected/route";
+import { Route as IndexRouteImport } from "./routes/index";
 
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const NotprotectedRouteRoute = NotprotectedRouteRouteImport.update({
-  id: '/_notprotected',
+  id: "/_notprotected",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
-  id: '/_protected',
+  id: "/_protected",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const NotprotectedAuthRouteRoute = NotprotectedAuthRouteRouteImport.update({
-  id: '/_auth',
+  id: "/_auth",
   getParentRoute: () => NotprotectedRouteRoute,
-} as any)
+} as any);
 const NotprotectedMessageRouteRoute =
   NotprotectedMessageRouteRouteImport.update({
-    id: '/_message',
+    id: "/_message",
     getParentRoute: () => NotprotectedRouteRoute,
-  } as any)
+  } as any);
 const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+  id: "/dashboard",
+  path: "/dashboard",
   getParentRoute: () => ProtectedRouteRoute,
-} as any)
+} as any);
 const ProtectedProfileRoute = ProtectedProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
+  id: "/profile",
+  path: "/profile",
   getParentRoute: () => ProtectedRouteRoute,
-} as any)
+} as any);
 const NotprotectedAuthForgotPasswordRequestRoute =
   NotprotectedAuthForgotPasswordRequestRouteImport.update({
-    id: '/forgotPasswordRequest',
-    path: '/forgotPasswordRequest',
+    id: "/forgotPasswordRequest",
+    path: "/forgotPasswordRequest",
     getParentRoute: () => NotprotectedAuthRouteRoute,
-  } as any)
+  } as any);
 const NotprotectedAuthLoginRoute = NotprotectedAuthLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+  id: "/login",
+  path: "/login",
   getParentRoute: () => NotprotectedAuthRouteRoute,
-} as any)
+} as any);
 const NotprotectedAuthRegisterRoute =
   NotprotectedAuthRegisterRouteImport.update({
-    id: '/register',
-    path: '/register',
+    id: "/register",
+    path: "/register",
     getParentRoute: () => NotprotectedAuthRouteRoute,
-  } as any)
+  } as any);
 const NotprotectedAuthResendVerificationTokenRoute =
   NotprotectedAuthResendVerificationTokenRouteImport.update({
-    id: '/resendVerificationToken',
-    path: '/resendVerificationToken',
+    id: "/resendVerificationToken",
+    path: "/resendVerificationToken",
     getParentRoute: () => NotprotectedAuthRouteRoute,
-  } as any)
+  } as any);
 const NotprotectedMessageForgotpasswordEmailSentRoute =
   NotprotectedMessageForgotpasswordEmailSentRouteImport.update({
-    id: '/forgotpasswordEmailSent',
-    path: '/forgotpasswordEmailSent',
+    id: "/forgotpasswordEmailSent",
+    path: "/forgotpasswordEmailSent",
     getParentRoute: () => NotprotectedMessageRouteRoute,
-  } as any)
+  } as any);
 const NotprotectedMessageVerificationEmailSentRoute =
   NotprotectedMessageVerificationEmailSentRouteImport.update({
-    id: '/verificationEmailSent',
-    path: '/verificationEmailSent',
+    id: "/verificationEmailSent",
+    path: "/verificationEmailSent",
     getParentRoute: () => NotprotectedMessageRouteRoute,
-  } as any)
+  } as any);
 const ProtectedProjectProjectidRoute =
   ProtectedProjectProjectidRouteImport.update({
-    id: '/project/$projectid',
-    path: '/project/$projectid',
+    id: "/project/$projectid",
+    path: "/project/$projectid",
     getParentRoute: () => ProtectedRouteRoute,
-  } as any)
+  } as any);
 const NotprotectedMessageNewPasswordResetTokenRoute =
   NotprotectedMessageNewPasswordResetTokenRouteImport.update({
-    id: '/newPassword/$resetToken',
-    path: '/newPassword/$resetToken',
+    id: "/newPassword/$resetToken",
+    path: "/newPassword/$resetToken",
     getParentRoute: () => NotprotectedMessageRouteRoute,
-  } as any)
+  } as any);
 const NotprotectedMessageVerifyEmailVerificationTokenRoute =
   NotprotectedMessageVerifyEmailVerificationTokenRouteImport.update({
-    id: '/verifyEmail/$verificationToken',
-    path: '/verifyEmail/$verificationToken',
+    id: "/verifyEmail/$verificationToken",
+    path: "/verifyEmail/$verificationToken",
     getParentRoute: () => NotprotectedMessageRouteRoute,
-  } as any)
+  } as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/dashboard': typeof ProtectedDashboardRoute
-  '/profile': typeof ProtectedProfileRoute
-  '/forgotPasswordRequest': typeof NotprotectedAuthForgotPasswordRequestRoute
-  '/login': typeof NotprotectedAuthLoginRoute
-  '/register': typeof NotprotectedAuthRegisterRoute
-  '/resendVerificationToken': typeof NotprotectedAuthResendVerificationTokenRoute
-  '/forgotpasswordEmailSent': typeof NotprotectedMessageForgotpasswordEmailSentRoute
-  '/verificationEmailSent': typeof NotprotectedMessageVerificationEmailSentRoute
-  '/project/$projectid': typeof ProtectedProjectProjectidRoute
-  '/newPassword/$resetToken': typeof NotprotectedMessageNewPasswordResetTokenRoute
-  '/verifyEmail/$verificationToken': typeof NotprotectedMessageVerifyEmailVerificationTokenRoute
+  "/": typeof IndexRoute;
+  "/dashboard": typeof ProtectedDashboardRoute;
+  "/profile": typeof ProtectedProfileRoute;
+  "/forgotPasswordRequest": typeof NotprotectedAuthForgotPasswordRequestRoute;
+  "/login": typeof NotprotectedAuthLoginRoute;
+  "/register": typeof NotprotectedAuthRegisterRoute;
+  "/resendVerificationToken": typeof NotprotectedAuthResendVerificationTokenRoute;
+  "/forgotpasswordEmailSent": typeof NotprotectedMessageForgotpasswordEmailSentRoute;
+  "/verificationEmailSent": typeof NotprotectedMessageVerificationEmailSentRoute;
+  "/project/$projectid": typeof ProtectedProjectProjectidRoute;
+  "/newPassword/$resetToken": typeof NotprotectedMessageNewPasswordResetTokenRoute;
+  "/verifyEmail/$verificationToken": typeof NotprotectedMessageVerifyEmailVerificationTokenRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/dashboard': typeof ProtectedDashboardRoute
-  '/profile': typeof ProtectedProfileRoute
-  '/forgotPasswordRequest': typeof NotprotectedAuthForgotPasswordRequestRoute
-  '/login': typeof NotprotectedAuthLoginRoute
-  '/register': typeof NotprotectedAuthRegisterRoute
-  '/resendVerificationToken': typeof NotprotectedAuthResendVerificationTokenRoute
-  '/forgotpasswordEmailSent': typeof NotprotectedMessageForgotpasswordEmailSentRoute
-  '/verificationEmailSent': typeof NotprotectedMessageVerificationEmailSentRoute
-  '/project/$projectid': typeof ProtectedProjectProjectidRoute
-  '/newPassword/$resetToken': typeof NotprotectedMessageNewPasswordResetTokenRoute
-  '/verifyEmail/$verificationToken': typeof NotprotectedMessageVerifyEmailVerificationTokenRoute
+  "/": typeof IndexRoute;
+  "/dashboard": typeof ProtectedDashboardRoute;
+  "/profile": typeof ProtectedProfileRoute;
+  "/forgotPasswordRequest": typeof NotprotectedAuthForgotPasswordRequestRoute;
+  "/login": typeof NotprotectedAuthLoginRoute;
+  "/register": typeof NotprotectedAuthRegisterRoute;
+  "/resendVerificationToken": typeof NotprotectedAuthResendVerificationTokenRoute;
+  "/forgotpasswordEmailSent": typeof NotprotectedMessageForgotpasswordEmailSentRoute;
+  "/verificationEmailSent": typeof NotprotectedMessageVerificationEmailSentRoute;
+  "/project/$projectid": typeof ProtectedProjectProjectidRoute;
+  "/newPassword/$resetToken": typeof NotprotectedMessageNewPasswordResetTokenRoute;
+  "/verifyEmail/$verificationToken": typeof NotprotectedMessageVerifyEmailVerificationTokenRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/_notprotected': typeof NotprotectedRouteRouteWithChildren
-  '/_protected': typeof ProtectedRouteRouteWithChildren
-  '/_notprotected/_auth': typeof NotprotectedAuthRouteRouteWithChildren
-  '/_notprotected/_message': typeof NotprotectedMessageRouteRouteWithChildren
-  '/_protected/dashboard': typeof ProtectedDashboardRoute
-  '/_protected/profile': typeof ProtectedProfileRoute
-  '/_notprotected/_auth/forgotPasswordRequest': typeof NotprotectedAuthForgotPasswordRequestRoute
-  '/_notprotected/_auth/login': typeof NotprotectedAuthLoginRoute
-  '/_notprotected/_auth/register': typeof NotprotectedAuthRegisterRoute
-  '/_notprotected/_auth/resendVerificationToken': typeof NotprotectedAuthResendVerificationTokenRoute
-  '/_notprotected/_message/forgotpasswordEmailSent': typeof NotprotectedMessageForgotpasswordEmailSentRoute
-  '/_notprotected/_message/verificationEmailSent': typeof NotprotectedMessageVerificationEmailSentRoute
-  '/_protected/project/$projectid': typeof ProtectedProjectProjectidRoute
-  '/_notprotected/_message/newPassword/$resetToken': typeof NotprotectedMessageNewPasswordResetTokenRoute
-  '/_notprotected/_message/verifyEmail/$verificationToken': typeof NotprotectedMessageVerifyEmailVerificationTokenRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/_notprotected": typeof NotprotectedRouteRouteWithChildren;
+  "/_protected": typeof ProtectedRouteRouteWithChildren;
+  "/_notprotected/_auth": typeof NotprotectedAuthRouteRouteWithChildren;
+  "/_notprotected/_message": typeof NotprotectedMessageRouteRouteWithChildren;
+  "/_protected/dashboard": typeof ProtectedDashboardRoute;
+  "/_protected/profile": typeof ProtectedProfileRoute;
+  "/_notprotected/_auth/forgotPasswordRequest": typeof NotprotectedAuthForgotPasswordRequestRoute;
+  "/_notprotected/_auth/login": typeof NotprotectedAuthLoginRoute;
+  "/_notprotected/_auth/register": typeof NotprotectedAuthRegisterRoute;
+  "/_notprotected/_auth/resendVerificationToken": typeof NotprotectedAuthResendVerificationTokenRoute;
+  "/_notprotected/_message/forgotpasswordEmailSent": typeof NotprotectedMessageForgotpasswordEmailSentRoute;
+  "/_notprotected/_message/verificationEmailSent": typeof NotprotectedMessageVerificationEmailSentRoute;
+  "/_protected/project/$projectid": typeof ProtectedProjectProjectidRoute;
+  "/_notprotected/_message/newPassword/$resetToken": typeof NotprotectedMessageNewPasswordResetTokenRoute;
+  "/_notprotected/_message/verifyEmail/$verificationToken": typeof NotprotectedMessageVerifyEmailVerificationTokenRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | '/dashboard'
-    | '/profile'
-    | '/forgotPasswordRequest'
-    | '/login'
-    | '/register'
-    | '/resendVerificationToken'
-    | '/forgotpasswordEmailSent'
-    | '/verificationEmailSent'
-    | '/project/$projectid'
-    | '/newPassword/$resetToken'
-    | '/verifyEmail/$verificationToken'
-  fileRoutesByTo: FileRoutesByTo
+    | "/"
+    | "/dashboard"
+    | "/profile"
+    | "/forgotPasswordRequest"
+    | "/login"
+    | "/register"
+    | "/resendVerificationToken"
+    | "/forgotpasswordEmailSent"
+    | "/verificationEmailSent"
+    | "/project/$projectid"
+    | "/newPassword/$resetToken"
+    | "/verifyEmail/$verificationToken";
+  fileRoutesByTo: FileRoutesByTo;
   to:
-    | '/'
-    | '/dashboard'
-    | '/profile'
-    | '/forgotPasswordRequest'
-    | '/login'
-    | '/register'
-    | '/resendVerificationToken'
-    | '/forgotpasswordEmailSent'
-    | '/verificationEmailSent'
-    | '/project/$projectid'
-    | '/newPassword/$resetToken'
-    | '/verifyEmail/$verificationToken'
+    | "/"
+    | "/dashboard"
+    | "/profile"
+    | "/forgotPasswordRequest"
+    | "/login"
+    | "/register"
+    | "/resendVerificationToken"
+    | "/forgotpasswordEmailSent"
+    | "/verificationEmailSent"
+    | "/project/$projectid"
+    | "/newPassword/$resetToken"
+    | "/verifyEmail/$verificationToken";
   id:
-    | '__root__'
-    | '/'
-    | '/_notprotected'
-    | '/_protected'
-    | '/_notprotected/_auth'
-    | '/_notprotected/_message'
-    | '/_protected/dashboard'
-    | '/_protected/profile'
-    | '/_notprotected/_auth/forgotPasswordRequest'
-    | '/_notprotected/_auth/login'
-    | '/_notprotected/_auth/register'
-    | '/_notprotected/_auth/resendVerificationToken'
-    | '/_notprotected/_message/forgotpasswordEmailSent'
-    | '/_notprotected/_message/verificationEmailSent'
-    | '/_protected/project/$projectid'
-    | '/_notprotected/_message/newPassword/$resetToken'
-    | '/_notprotected/_message/verifyEmail/$verificationToken'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/"
+    | "/_notprotected"
+    | "/_protected"
+    | "/_notprotected/_auth"
+    | "/_notprotected/_message"
+    | "/_protected/dashboard"
+    | "/_protected/profile"
+    | "/_notprotected/_auth/forgotPasswordRequest"
+    | "/_notprotected/_auth/login"
+    | "/_notprotected/_auth/register"
+    | "/_notprotected/_auth/resendVerificationToken"
+    | "/_notprotected/_message/forgotpasswordEmailSent"
+    | "/_notprotected/_message/verificationEmailSent"
+    | "/_protected/project/$projectid"
+    | "/_notprotected/_message/newPassword/$resetToken"
+    | "/_notprotected/_message/verifyEmail/$verificationToken";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  NotprotectedRouteRoute: typeof NotprotectedRouteRouteWithChildren
-  ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
+  IndexRoute: typeof IndexRoute;
+  NotprotectedRouteRoute: typeof NotprotectedRouteRouteWithChildren;
+  ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_notprotected': {
-      id: '/_notprotected'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof NotprotectedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_protected': {
-      id: '/_protected'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof ProtectedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_notprotected/_auth': {
-      id: '/_notprotected/_auth'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof NotprotectedAuthRouteRouteImport
-      parentRoute: typeof NotprotectedRouteRoute
-    }
-    '/_notprotected/_message': {
-      id: '/_notprotected/_message'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof NotprotectedMessageRouteRouteImport
-      parentRoute: typeof NotprotectedRouteRoute
-    }
-    '/_protected/dashboard': {
-      id: '/_protected/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof ProtectedDashboardRouteImport
-      parentRoute: typeof ProtectedRouteRoute
-    }
-    '/_protected/profile': {
-      id: '/_protected/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProtectedProfileRouteImport
-      parentRoute: typeof ProtectedRouteRoute
-    }
-    '/_notprotected/_auth/forgotPasswordRequest': {
-      id: '/_notprotected/_auth/forgotPasswordRequest'
-      path: '/forgotPasswordRequest'
-      fullPath: '/forgotPasswordRequest'
-      preLoaderRoute: typeof NotprotectedAuthForgotPasswordRequestRouteImport
-      parentRoute: typeof NotprotectedAuthRouteRoute
-    }
-    '/_notprotected/_auth/login': {
-      id: '/_notprotected/_auth/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof NotprotectedAuthLoginRouteImport
-      parentRoute: typeof NotprotectedAuthRouteRoute
-    }
-    '/_notprotected/_auth/register': {
-      id: '/_notprotected/_auth/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof NotprotectedAuthRegisterRouteImport
-      parentRoute: typeof NotprotectedAuthRouteRoute
-    }
-    '/_notprotected/_auth/resendVerificationToken': {
-      id: '/_notprotected/_auth/resendVerificationToken'
-      path: '/resendVerificationToken'
-      fullPath: '/resendVerificationToken'
-      preLoaderRoute: typeof NotprotectedAuthResendVerificationTokenRouteImport
-      parentRoute: typeof NotprotectedAuthRouteRoute
-    }
-    '/_notprotected/_message/forgotpasswordEmailSent': {
-      id: '/_notprotected/_message/forgotpasswordEmailSent'
-      path: '/forgotpasswordEmailSent'
-      fullPath: '/forgotpasswordEmailSent'
-      preLoaderRoute: typeof NotprotectedMessageForgotpasswordEmailSentRouteImport
-      parentRoute: typeof NotprotectedMessageRouteRoute
-    }
-    '/_notprotected/_message/verificationEmailSent': {
-      id: '/_notprotected/_message/verificationEmailSent'
-      path: '/verificationEmailSent'
-      fullPath: '/verificationEmailSent'
-      preLoaderRoute: typeof NotprotectedMessageVerificationEmailSentRouteImport
-      parentRoute: typeof NotprotectedMessageRouteRoute
-    }
-    '/_protected/project/$projectid': {
-      id: '/_protected/project/$projectid'
-      path: '/project/$projectid'
-      fullPath: '/project/$projectid'
-      preLoaderRoute: typeof ProtectedProjectProjectidRouteImport
-      parentRoute: typeof ProtectedRouteRoute
-    }
-    '/_notprotected/_message/newPassword/$resetToken': {
-      id: '/_notprotected/_message/newPassword/$resetToken'
-      path: '/newPassword/$resetToken'
-      fullPath: '/newPassword/$resetToken'
-      preLoaderRoute: typeof NotprotectedMessageNewPasswordResetTokenRouteImport
-      parentRoute: typeof NotprotectedMessageRouteRoute
-    }
-    '/_notprotected/_message/verifyEmail/$verificationToken': {
-      id: '/_notprotected/_message/verifyEmail/$verificationToken'
-      path: '/verifyEmail/$verificationToken'
-      fullPath: '/verifyEmail/$verificationToken'
-      preLoaderRoute: typeof NotprotectedMessageVerifyEmailVerificationTokenRouteImport
-      parentRoute: typeof NotprotectedMessageRouteRoute
-    }
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_notprotected": {
+      id: "/_notprotected";
+      path: "";
+      fullPath: "/";
+      preLoaderRoute: typeof NotprotectedRouteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_protected": {
+      id: "/_protected";
+      path: "";
+      fullPath: "/";
+      preLoaderRoute: typeof ProtectedRouteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_notprotected/_auth": {
+      id: "/_notprotected/_auth";
+      path: "";
+      fullPath: "/";
+      preLoaderRoute: typeof NotprotectedAuthRouteRouteImport;
+      parentRoute: typeof NotprotectedRouteRoute;
+    };
+    "/_notprotected/_message": {
+      id: "/_notprotected/_message";
+      path: "";
+      fullPath: "/";
+      preLoaderRoute: typeof NotprotectedMessageRouteRouteImport;
+      parentRoute: typeof NotprotectedRouteRoute;
+    };
+    "/_protected/dashboard": {
+      id: "/_protected/dashboard";
+      path: "/dashboard";
+      fullPath: "/dashboard";
+      preLoaderRoute: typeof ProtectedDashboardRouteImport;
+      parentRoute: typeof ProtectedRouteRoute;
+    };
+    "/_protected/profile": {
+      id: "/_protected/profile";
+      path: "/profile";
+      fullPath: "/profile";
+      preLoaderRoute: typeof ProtectedProfileRouteImport;
+      parentRoute: typeof ProtectedRouteRoute;
+    };
+    "/_notprotected/_auth/forgotPasswordRequest": {
+      id: "/_notprotected/_auth/forgotPasswordRequest";
+      path: "/forgotPasswordRequest";
+      fullPath: "/forgotPasswordRequest";
+      preLoaderRoute: typeof NotprotectedAuthForgotPasswordRequestRouteImport;
+      parentRoute: typeof NotprotectedAuthRouteRoute;
+    };
+    "/_notprotected/_auth/login": {
+      id: "/_notprotected/_auth/login";
+      path: "/login";
+      fullPath: "/login";
+      preLoaderRoute: typeof NotprotectedAuthLoginRouteImport;
+      parentRoute: typeof NotprotectedAuthRouteRoute;
+    };
+    "/_notprotected/_auth/register": {
+      id: "/_notprotected/_auth/register";
+      path: "/register";
+      fullPath: "/register";
+      preLoaderRoute: typeof NotprotectedAuthRegisterRouteImport;
+      parentRoute: typeof NotprotectedAuthRouteRoute;
+    };
+    "/_notprotected/_auth/resendVerificationToken": {
+      id: "/_notprotected/_auth/resendVerificationToken";
+      path: "/resendVerificationToken";
+      fullPath: "/resendVerificationToken";
+      preLoaderRoute: typeof NotprotectedAuthResendVerificationTokenRouteImport;
+      parentRoute: typeof NotprotectedAuthRouteRoute;
+    };
+    "/_notprotected/_message/forgotpasswordEmailSent": {
+      id: "/_notprotected/_message/forgotpasswordEmailSent";
+      path: "/forgotpasswordEmailSent";
+      fullPath: "/forgotpasswordEmailSent";
+      preLoaderRoute: typeof NotprotectedMessageForgotpasswordEmailSentRouteImport;
+      parentRoute: typeof NotprotectedMessageRouteRoute;
+    };
+    "/_notprotected/_message/verificationEmailSent": {
+      id: "/_notprotected/_message/verificationEmailSent";
+      path: "/verificationEmailSent";
+      fullPath: "/verificationEmailSent";
+      preLoaderRoute: typeof NotprotectedMessageVerificationEmailSentRouteImport;
+      parentRoute: typeof NotprotectedMessageRouteRoute;
+    };
+    "/_protected/project/$projectid": {
+      id: "/_protected/project/$projectid";
+      path: "/project/$projectid";
+      fullPath: "/project/$projectid";
+      preLoaderRoute: typeof ProtectedProjectProjectidRouteImport;
+      parentRoute: typeof ProtectedRouteRoute;
+    };
+    "/_notprotected/_message/newPassword/$resetToken": {
+      id: "/_notprotected/_message/newPassword/$resetToken";
+      path: "/newPassword/$resetToken";
+      fullPath: "/newPassword/$resetToken";
+      preLoaderRoute: typeof NotprotectedMessageNewPasswordResetTokenRouteImport;
+      parentRoute: typeof NotprotectedMessageRouteRoute;
+    };
+    "/_notprotected/_message/verifyEmail/$verificationToken": {
+      id: "/_notprotected/_message/verifyEmail/$verificationToken";
+      path: "/verifyEmail/$verificationToken";
+      fullPath: "/verifyEmail/$verificationToken";
+      preLoaderRoute: typeof NotprotectedMessageVerifyEmailVerificationTokenRouteImport;
+      parentRoute: typeof NotprotectedMessageRouteRoute;
+    };
   }
 }
 
 interface NotprotectedAuthRouteRouteChildren {
-  NotprotectedAuthForgotPasswordRequestRoute: typeof NotprotectedAuthForgotPasswordRequestRoute
-  NotprotectedAuthLoginRoute: typeof NotprotectedAuthLoginRoute
-  NotprotectedAuthRegisterRoute: typeof NotprotectedAuthRegisterRoute
-  NotprotectedAuthResendVerificationTokenRoute: typeof NotprotectedAuthResendVerificationTokenRoute
+  NotprotectedAuthForgotPasswordRequestRoute: typeof NotprotectedAuthForgotPasswordRequestRoute;
+  NotprotectedAuthLoginRoute: typeof NotprotectedAuthLoginRoute;
+  NotprotectedAuthRegisterRoute: typeof NotprotectedAuthRegisterRoute;
+  NotprotectedAuthResendVerificationTokenRoute: typeof NotprotectedAuthResendVerificationTokenRoute;
 }
 
 const NotprotectedAuthRouteRouteChildren: NotprotectedAuthRouteRouteChildren = {
@@ -345,18 +345,18 @@ const NotprotectedAuthRouteRouteChildren: NotprotectedAuthRouteRouteChildren = {
   NotprotectedAuthRegisterRoute: NotprotectedAuthRegisterRoute,
   NotprotectedAuthResendVerificationTokenRoute:
     NotprotectedAuthResendVerificationTokenRoute,
-}
+};
 
 const NotprotectedAuthRouteRouteWithChildren =
   NotprotectedAuthRouteRoute._addFileChildren(
     NotprotectedAuthRouteRouteChildren,
-  )
+  );
 
 interface NotprotectedMessageRouteRouteChildren {
-  NotprotectedMessageForgotpasswordEmailSentRoute: typeof NotprotectedMessageForgotpasswordEmailSentRoute
-  NotprotectedMessageVerificationEmailSentRoute: typeof NotprotectedMessageVerificationEmailSentRoute
-  NotprotectedMessageNewPasswordResetTokenRoute: typeof NotprotectedMessageNewPasswordResetTokenRoute
-  NotprotectedMessageVerifyEmailVerificationTokenRoute: typeof NotprotectedMessageVerifyEmailVerificationTokenRoute
+  NotprotectedMessageForgotpasswordEmailSentRoute: typeof NotprotectedMessageForgotpasswordEmailSentRoute;
+  NotprotectedMessageVerificationEmailSentRoute: typeof NotprotectedMessageVerificationEmailSentRoute;
+  NotprotectedMessageNewPasswordResetTokenRoute: typeof NotprotectedMessageNewPasswordResetTokenRoute;
+  NotprotectedMessageVerifyEmailVerificationTokenRoute: typeof NotprotectedMessageVerifyEmailVerificationTokenRoute;
 }
 
 const NotprotectedMessageRouteRouteChildren: NotprotectedMessageRouteRouteChildren =
@@ -369,47 +369,47 @@ const NotprotectedMessageRouteRouteChildren: NotprotectedMessageRouteRouteChildr
       NotprotectedMessageNewPasswordResetTokenRoute,
     NotprotectedMessageVerifyEmailVerificationTokenRoute:
       NotprotectedMessageVerifyEmailVerificationTokenRoute,
-  }
+  };
 
 const NotprotectedMessageRouteRouteWithChildren =
   NotprotectedMessageRouteRoute._addFileChildren(
     NotprotectedMessageRouteRouteChildren,
-  )
+  );
 
 interface NotprotectedRouteRouteChildren {
-  NotprotectedAuthRouteRoute: typeof NotprotectedAuthRouteRouteWithChildren
-  NotprotectedMessageRouteRoute: typeof NotprotectedMessageRouteRouteWithChildren
+  NotprotectedAuthRouteRoute: typeof NotprotectedAuthRouteRouteWithChildren;
+  NotprotectedMessageRouteRoute: typeof NotprotectedMessageRouteRouteWithChildren;
 }
 
 const NotprotectedRouteRouteChildren: NotprotectedRouteRouteChildren = {
   NotprotectedAuthRouteRoute: NotprotectedAuthRouteRouteWithChildren,
   NotprotectedMessageRouteRoute: NotprotectedMessageRouteRouteWithChildren,
-}
+};
 
 const NotprotectedRouteRouteWithChildren =
-  NotprotectedRouteRoute._addFileChildren(NotprotectedRouteRouteChildren)
+  NotprotectedRouteRoute._addFileChildren(NotprotectedRouteRouteChildren);
 
 interface ProtectedRouteRouteChildren {
-  ProtectedDashboardRoute: typeof ProtectedDashboardRoute
-  ProtectedProfileRoute: typeof ProtectedProfileRoute
-  ProtectedProjectProjectidRoute: typeof ProtectedProjectProjectidRoute
+  ProtectedDashboardRoute: typeof ProtectedDashboardRoute;
+  ProtectedProfileRoute: typeof ProtectedProfileRoute;
+  ProtectedProjectProjectidRoute: typeof ProtectedProjectProjectidRoute;
 }
 
 const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
   ProtectedDashboardRoute: ProtectedDashboardRoute,
   ProtectedProfileRoute: ProtectedProfileRoute,
   ProtectedProjectProjectidRoute: ProtectedProjectProjectidRoute,
-}
+};
 
 const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(
   ProtectedRouteRouteChildren,
-)
+);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   NotprotectedRouteRoute: NotprotectedRouteRouteWithChildren,
   ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

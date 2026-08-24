@@ -1,0 +1,19 @@
+# Normalize all text files to LF in the repo and in working trees,
+# regardless of OS or core.autocrlf settings.
+* text=auto eol=lf
+
+# Explicitly mark common binary types so they are never EOL-normalized.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.avif binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+*.pdf binary
+*.zip binary

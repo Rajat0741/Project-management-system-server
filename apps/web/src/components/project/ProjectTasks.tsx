@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { tasksQueryOptions } from "@/hooks/useTasks";
 import { cn } from "@/lib/utils";
@@ -101,11 +102,13 @@ export function ProjectTasks({
           };
           const isActive = statusFilter === status;
           return (
-            <button
+            <Button
+              type="button"
               key={status}
+              variant="ghost"
               onClick={() => setStatusFilter(status)}
               className={cn(
-                "relative px-3 py-2 text-sm font-medium transition-colors",
+                "relative h-auto border-0 rounded-none px-3 py-2 hover:bg-transparent transition-colors",
                 isActive
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -127,7 +130,7 @@ export function ProjectTasks({
                   transition={{ duration: 0.2 }}
                 />
               )}
-            </button>
+            </Button>
           );
         })}
       </div>

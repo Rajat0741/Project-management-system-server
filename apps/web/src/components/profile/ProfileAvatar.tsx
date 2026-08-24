@@ -1,6 +1,7 @@
 import { Camera, Loader2 } from "lucide-react";
 import { useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { useUpdateProfilePicture } from "@/hooks/useAuth";
 
 interface ProfileAvatarProps {
@@ -54,11 +55,13 @@ export function ProfileAvatar({
         </Avatar>
 
         {/* Hover overlay */}
-        <button
+        <Button
+          type="button"
+          variant="ghost"
           onClick={handleAvatarClick}
           disabled={updateProfilePicture.isPending}
-          className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer disabled:cursor-not-allowed"
           title="Change profile picture"
+          className="absolute inset-0 flex h-auto flex-col gap-0 rounded-full bg-black/60 p-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer hover:bg-black/60 disabled:opacity-100 disabled:cursor-not-allowed"
         >
           {updateProfilePicture.isPending ? (
             <Loader2 className="size-6 text-white animate-spin" />
@@ -68,7 +71,7 @@ export function ProfileAvatar({
               <span className="text-xs text-white mt-1">Change</span>
             </>
           )}
-        </button>
+        </Button>
 
         <input
           ref={fileInputRef}

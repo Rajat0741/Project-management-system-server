@@ -1,0 +1,15 @@
+packages:
+  - "apps/*"
+
+allowBuilds:
+  "@tsparticles/engine": true
+  bcrypt: true
+  esbuild: true
+  msw: true
+
+onlyBuiltDependencies:
+  - "@tailwindcss/oxide"
+  - "@tsparticles/engine"
+  - bcrypt
+  - esbuild
+  - msw

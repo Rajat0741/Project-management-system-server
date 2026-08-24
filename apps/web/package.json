@@ -1,5 +1,5 @@
 {
-  "name": "project-management-system",
+  "name": "@pms/web",
   "private": true,
   "version": "0.0.0",
   "type": "module",

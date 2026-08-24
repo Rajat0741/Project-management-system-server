@@ -1,13 +1,13 @@
 {
   "name": "project-management-system",
   "private": true,
-  "workspaces": [
-    "apps/*"
-  ],
-  "packageManager": "npm@11.8.0",
+  "packageManager": "pnpm@11.20.0",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.10"
   }
 }
